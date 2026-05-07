@@ -1,0 +1,2188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ReboundX — The trading terminal that pays you back</title>
+<meta name="description" content="Trade across 18 exchanges from one keyboard-first terminal. Earn up to 50% of your fees back as rebates — automatically." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+/* ─────────────────────────────────────────────────────────────
+   Tokens
+───────────────────────────────────────────────────────────── */
+:root {
+  --bg: #08090A;
+  --bg-elev: #0E0F11;
+  --bg-card: #131418;
+  --bg-card-hover: #181A1F;
+  --border: #1F2126;
+  --border-bright: #2E3138;
+  --text: #F0F1F2;
+  --text-muted: #8B8E94;
+  --text-dim: #5A5D63;
+  --accent: #B8FF34;
+  --accent-bright: #D4FF5C;
+  --accent-glow: rgba(184, 255, 52, 0.15);
+  --accent-glow-strong: rgba(184, 255, 52, 0.35);
+  --success: #4ADE80;
+  --danger: #F87171;
+  --warn: #FBBF24;
+  --max: 1200px;
+  --max-narrow: 1040px;
+  --pad: clamp(20px, 4vw, 48px);
+  --section: clamp(96px, 12vw, 160px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+}
+.mono { font-family: 'JetBrains Mono', ui-monospace, monospace; font-feature-settings: 'tnum' 1; }
+img, svg { max-width: 100%; display: block; }
+a { color: inherit; }
+
+.container { max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
+.container-narrow { max-width: var(--max-narrow); margin: 0 auto; padding: 0 var(--pad); }
+
+/* ─────────────────────────────────────────────────────────────
+   Nav
+───────────────────────────────────────────────────────────── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 60px; z-index: 100;
+  background: rgba(8, 9, 10, 0.6);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s, background 0.3s;
+}
+.nav.scrolled { border-bottom-color: var(--border); background: rgba(8, 9, 10, 0.85); }
+.nav-inner {
+  height: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: var(--max); margin: 0 auto; padding: 0 var(--pad);
+}
+.logo {
+  font-weight: 600; font-size: 15px;
+  letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none; color: var(--text);
+}
+.logo-mark {
+  width: 22px; height: 22px;
+  border-radius: 5px;
+  background: var(--accent);
+  position: relative;
+  box-shadow: 0 0 18px var(--accent-glow);
+}
+.logo-mark::before {
+  content: ''; position: absolute; inset: 4px;
+  background: var(--bg); border-radius: 2px;
+}
+.logo-mark::after {
+  content: ''; position: absolute;
+  top: 50%; left: 50%;
+  width: 8px; height: 2px;
+  background: var(--accent);
+  box-shadow: 0 4px 0 var(--accent), 0 -4px 0 var(--accent);
+  transform: translate(-50%, -50%);
+}
+.nav-links { display: flex; gap: 28px; list-style: none; }
+.nav-links a { color: var(--text-muted); text-decoration: none; font-size: 14px; transition: color 0.15s; }
+.nav-links a:hover { color: var(--text); }
+.nav-cta { display: flex; gap: 10px; align-items: center; }
+@media (max-width: 768px) { .nav-links { display: none; } }
+
+/* ─────────────────────────────────────────────────────────────
+   Buttons
+───────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border-radius: 6px;
+  font-size: 14px; font-weight: 500;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.2s, transform 0.1s;
+  font-family: inherit; white-space: nowrap;
+}
+.btn-primary {
+  background: var(--accent); color: #04050A; font-weight: 600;
+}
+.btn-primary:hover { background: var(--accent-bright); box-shadow: 0 0 28px var(--accent-glow-strong); }
+.btn-primary:active { transform: translateY(1px); }
+.btn-ghost { color: var(--text); background: transparent; border-color: var(--border); }
+.btn-ghost:hover { border-color: var(--border-bright); background: var(--bg-card); }
+.btn-large { padding: 13px 22px; font-size: 14px; }
+.btn-arrow { transition: transform 0.2s; }
+.btn:hover .btn-arrow { transform: translateX(2px); }
+
+/* Pill chip used as eyebrow */
+.chip {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px 6px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 12px; color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  text-decoration: none;
+  transition: border-color 0.15s, color 0.15s;
+}
+.chip:hover { border-color: var(--border-bright); color: var(--text); }
+.chip .dot {
+  width: 6px; height: 6px;
+  background: var(--accent); border-radius: 50%;
+  box-shadow: 0 0 10px var(--accent);
+  animation: pulse 2s infinite;
+}
+.chip .arrow { color: var(--text-dim); }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+/* ─────────────────────────────────────────────────────────────
+   Hero — centered (Unkey pattern)
+───────────────────────────────────────────────────────────── */
+.hero {
+  position: relative;
+  padding: 168px 0 100px;
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center;
+}
+.hero-bg {
+  position: absolute; inset: -200px 0 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 0%, rgba(184,255,52,0.10), transparent 60%),
+    radial-gradient(ellipse 80% 60% at 50% 100%, rgba(184,255,52,0.05), transparent 60%);
+  animation: drift 18s ease-in-out infinite alternate;
+}
+@keyframes drift {
+  0%   { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-30px, 20px, 0); }
+}
+.hero-grid {
+  position: absolute; inset: 0; z-index: -1;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 70% 55% at 50% 30%, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 30%, black 20%, transparent 75%);
+}
+
+.hero-chip {
+  margin-bottom: 32px;
+  opacity: 0; transform: translateY(8px);
+  animation: fadeUp 0.6s 0.1s ease-out forwards;
+}
+@keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+.hero h1 {
+  font-size: clamp(48px, 7.4vw, 92px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.96;
+  margin: 0 auto 28px;
+  max-width: 14ch;
+  opacity: 0; transform: translateY(12px);
+  animation: fadeUp 0.7s 0.2s cubic-bezier(0.2, 0.6, 0.2, 1) forwards;
+}
+.hero h1 em {
+  font-style: italic; font-weight: 500;
+  background: linear-gradient(180deg, var(--accent) 30%, var(--accent-bright));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 40px var(--accent-glow);
+}
+.hero .lead {
+  font-size: clamp(16px, 1.4vw, 19px);
+  color: var(--text-muted);
+  max-width: 56ch;
+  line-height: 1.55;
+  margin: 0 auto 40px;
+  opacity: 0; transform: translateY(12px);
+  animation: fadeUp 0.7s 0.35s cubic-bezier(0.2, 0.6, 0.2, 1) forwards;
+}
+.hero-cta {
+  display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap;
+  margin-bottom: 32px;
+  opacity: 0; transform: translateY(12px);
+  animation: fadeUp 0.7s 0.5s cubic-bezier(0.2, 0.6, 0.2, 1) forwards;
+}
+.hero-trust {
+  display: flex; gap: 24px; flex-wrap: wrap; justify-content: center;
+  font-size: 12px;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  opacity: 0;
+  animation: fadeUp 0.7s 0.65s cubic-bezier(0.2, 0.6, 0.2, 1) forwards;
+}
+.hero-trust span { display: inline-flex; align-items: center; gap: 6px; }
+.hero-trust .check { color: var(--accent); width: 12px; height: 12px; }
+
+/* Hero terminal — centered below text */
+.hero-terminal-wrap {
+  margin-top: 80px;
+  position: relative;
+  opacity: 0; transform: translateY(20px) scale(0.98);
+  animation: fadeUp 0.9s 0.7s cubic-bezier(0.2, 0.6, 0.2, 1) forwards;
+}
+.hero-terminal-wrap::before {
+  content: '';
+  position: absolute;
+  top: 60%; left: 50%;
+  width: 80%; height: 60%;
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, var(--accent-glow), transparent 70%);
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  filter: blur(40px);
+}
+.terminal {
+  position: relative;
+  background: linear-gradient(180deg, #0E0F11 0%, #0A0B0D 100%);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.02) inset,
+    0 24px 48px -16px rgba(0,0,0,0.6),
+    0 0 80px -20px var(--accent-glow);
+}
+.terminal::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 14px;
+  padding: 1px;
+  background: linear-gradient(180deg, rgba(184,255,52,0.25), transparent 50%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  pointer-events: none;
+}
+.terminal-bar {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.01);
+}
+.tb-dots { display: flex; gap: 6px; }
+.tb-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border-bright); }
+.tb-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--text-dim);
+  margin-left: 8px; letter-spacing: 0.02em;
+}
+.tb-status {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--text-dim);
+}
+.tb-status .live { color: var(--accent); }
+.tb-status .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+
+.terminal-body {
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+.exch-col {
+  background: rgba(255,255,255,0.012);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.exch-col.best {
+  border-color: rgba(184, 255, 52, 0.3);
+  box-shadow: 0 0 0 1px rgba(184, 255, 52, 0.15) inset, 0 0 24px -8px var(--accent-glow);
+}
+.exch-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+}
+.exch-head .name { color: var(--text); font-weight: 500; }
+.exch-head .badge {
+  color: var(--accent); font-size: 9px;
+  padding: 2px 6px;
+  background: rgba(184, 255, 52, 0.08);
+  border-radius: 3px;
+  border: 1px solid rgba(184, 255, 52, 0.2);
+}
+.book { padding: 8px 0; }
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 3px 10px;
+  font-size: 10px;
+  position: relative;
+}
+.row .qty { color: var(--text-dim); text-align: right; }
+.row.ask .price { color: var(--danger); }
+.row.bid .price { color: var(--success); }
+.row::before {
+  content: ''; position: absolute;
+  top: 0; right: 0; bottom: 0;
+  background: rgba(248, 113, 113, 0.06);
+  width: var(--depth, 30%);
+  z-index: 0;
+}
+.row.bid::before { background: rgba(74, 222, 128, 0.06); left: 0; right: auto; }
+.row > * { position: relative; z-index: 1; }
+.spread-row {
+  padding: 6px 10px;
+  font-size: 10px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between;
+  background: rgba(255,255,255,0.01);
+}
+
+.terminal-footer {
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+  background: linear-gradient(180deg, rgba(184,255,52,0.02), rgba(184,255,52,0.05));
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  flex-wrap: wrap; gap: 10px;
+}
+.tf-route { color: var(--text-muted); }
+.tf-route .v { color: var(--text); }
+.tf-route .arrow { color: var(--accent); margin: 0 6px; }
+.tf-rebate {
+  display: flex; align-items: center; gap: 8px;
+  color: var(--accent); font-weight: 500;
+}
+.tf-rebate svg { width: 14px; height: 14px; }
+
+/* ─────────────────────────────────────────────────────────────
+   Logos strip + Stats
+───────────────────────────────────────────────────────────── */
+.trusted {
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 32px 0;
+  background: var(--bg-elev);
+}
+.trusted-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  text-align: center;
+  margin-bottom: 24px;
+}
+.trusted-logos {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 1px;
+  background: transparent;
+}
+.trusted-logos .logo-cell {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 12px 8px;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+.trusted-logos .logo-cell:hover { color: var(--text); }
+@media (max-width: 880px) {
+  .trusted-logos { grid-template-columns: repeat(3, 1fr); }
+}
+
+.stats {
+  border-bottom: 1px solid var(--border);
+  padding: 56px 0;
+  background: var(--bg);
+  position: relative;
+}
+.stats::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 80% at 50% 50%, rgba(184,255,52,0.025), transparent 60%);
+  pointer-events: none;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  position: relative;
+}
+.stat {
+  background: var(--bg);
+  padding: 32px 28px;
+  text-align: center;
+}
+.stat .label {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 10px;
+}
+.stat .value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(28px, 3.4vw, 42px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  color: var(--text);
+}
+.stat .value .unit { color: var(--text-muted); font-size: 0.65em; margin-left: 2px; }
+.stat .value.accent { color: var(--accent); text-shadow: 0 0 24px var(--accent-glow); }
+@media (max-width: 768px) { .stats-grid { grid-template-columns: 1fr 1fr; } }
+
+/* ─────────────────────────────────────────────────────────────
+   Section header
+───────────────────────────────────────────────────────────── */
+.section-header {
+  text-align: center;
+  margin: 0 auto 64px;
+  max-width: 720px;
+}
+.section-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 18px;
+}
+.section-eyebrow::before { content: ''; width: 14px; height: 1px; background: var(--accent); }
+.section-eyebrow::after  { content: ''; width: 14px; height: 1px; background: var(--accent); }
+.section-title {
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  margin: 0 auto 18px;
+  max-width: 22ch;
+}
+.section-title em {
+  font-style: italic; font-weight: 500;
+  color: var(--accent);
+  text-shadow: 0 0 30px var(--accent-glow);
+}
+.section-lead {
+  font-size: 17px;
+  color: var(--text-muted);
+  line-height: 1.55;
+  max-width: 56ch;
+  margin: 0 auto;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Bento Grid (Unkey signature)
+───────────────────────────────────────────────────────────── */
+.bento-section {
+  padding: var(--section) 0;
+}
+.bento {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: minmax(300px, auto);
+  gap: 16px;
+}
+@media (max-width: 980px) {
+  .bento { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .bento { grid-template-columns: 1fr; }
+}
+.bento-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  display: flex; flex-direction: column;
+  transition: border-color 0.25s, transform 0.25s;
+}
+.bento-card:hover { border-color: var(--border-bright); }
+.bento-card.span-2 { grid-column: span 2; }
+@media (max-width: 980px) { .bento-card.span-2 { grid-column: span 2; } }
+@media (max-width: 640px) { .bento-card.span-2 { grid-column: span 1; } }
+
+.bc-text {
+  padding: 28px 28px 20px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.bc-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.bc-title {
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.bc-body {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.55;
+  max-width: 50ch;
+}
+.bc-visual {
+  flex-grow: 1;
+  position: relative;
+  min-height: 180px;
+  margin-top: auto;
+  border-top: 1px solid var(--border);
+  background: linear-gradient(180deg, transparent, rgba(0,0,0,0.2));
+}
+.bc-visual.no-border { border-top: none; background: transparent; }
+
+/* Bento card 1 — Unified market visual */
+.bv-compare {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.bv-compare .col {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 12px 10px;
+  font-size: 10px;
+}
+.bv-compare .col.best {
+  border-color: rgba(184,255,52,0.3);
+  background: linear-gradient(180deg, rgba(184,255,52,0.05), var(--bg));
+  box-shadow: 0 0 24px -10px var(--accent-glow-strong);
+}
+.bv-compare .col .ex { color: var(--text-dim); margin-bottom: 6px; }
+.bv-compare .col.best .ex { color: var(--accent); }
+.bv-compare .col .px { color: var(--text); font-size: 13px; }
+.bv-compare .col .meta { color: var(--text-dim); font-size: 9px; margin-top: 6px; }
+
+/* Bento card 2 — Smart routing visual */
+.bv-route { padding: 18px; font-family: 'JetBrains Mono', monospace; }
+.bv-route-head {
+  display: flex; justify-content: space-between;
+  font-size: 10px; color: var(--text-dim);
+  margin-bottom: 12px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+}
+.bv-route-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 60px;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 11px;
+  border-bottom: 1px solid var(--border);
+}
+.bv-route-row:last-child { border-bottom: none; }
+.bv-route-row.best {
+  margin: 0 -8px;
+  padding: 8px 8px;
+  background: rgba(184,255,52,0.04);
+  border-radius: 4px;
+  border-color: transparent;
+}
+.bv-route-row .ex { color: var(--text); }
+.bv-route-row .bar {
+  height: 4px; background: var(--bg-elev); border-radius: 2px; position: relative; overflow: hidden;
+}
+.bv-route-row .bar::after {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: var(--w, 50%); background: var(--text-dim);
+}
+.bv-route-row.best .bar::after { background: var(--accent); }
+.bv-route-row .px { color: var(--text-muted); text-align: right; }
+.bv-route-row.best .px { color: var(--accent); font-weight: 500; }
+
+/* Bento card 3 — State-driven visual */
+.bv-state { padding: 18px; }
+.bv-state-pills {
+  display: flex; gap: 6px; margin-bottom: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+}
+.bv-state-pills .p {
+  padding: 4px 8px;
+  border-radius: 3px;
+  background: var(--bg);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+.bv-state-pills .p.active {
+  color: var(--accent); border-color: rgba(184,255,52,0.3);
+  background: rgba(184,255,52,0.05);
+}
+.bv-state-ticket { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.bv-state-ticket .row {
+  display: grid; grid-template-columns: 60px 1fr;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+}
+.bv-state-ticket .row .l { color: var(--text-dim); }
+.bv-state-ticket .row .r { color: var(--text); text-align: right; }
+.bv-state-ticket .row .r.success { color: var(--success); }
+.bv-state-ticket .row .r.accent { color: var(--accent); }
+.bv-state-ticket .btns {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 6px; margin-top: 10px;
+}
+.bv-state-ticket .b {
+  padding: 7px;
+  text-align: center;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 500;
+}
+.bv-state-ticket .b.buy { background: rgba(74,222,128,0.1); color: var(--success); border: 1px solid rgba(74,222,128,0.2); }
+.bv-state-ticket .b.sell { background: rgba(248,113,113,0.1); color: var(--danger); border: 1px solid rgba(248,113,113,0.2); }
+
+/* Bento card 4 — Lifecycle visual */
+.bv-life { padding: 20px; }
+.bv-life-stages {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  position: relative;
+  margin-bottom: 22px;
+}
+.bv-life-stages::before {
+  content: ''; position: absolute;
+  top: 17px; left: 16%; right: 16%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), rgba(184,255,52,0.2), var(--accent));
+}
+.bv-life-stage {
+  text-align: center;
+  position: relative; z-index: 1;
+}
+.bv-life-icon {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid rgba(184,255,52,0.3);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 8px;
+  color: var(--accent);
+  box-shadow: 0 0 14px -4px var(--accent-glow-strong);
+}
+.bv-life-icon svg { width: 14px; height: 14px; }
+.bv-life-stage .lab {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.bv-life-pos {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+}
+.bv-life-pos .ph {
+  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+  padding: 6px 10px;
+  background: var(--bg-elev);
+  color: var(--text-dim);
+  font-size: 9px;
+  text-transform: uppercase; letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border);
+}
+.bv-life-pos .pr {
+  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+}
+.bv-life-pos .pr:last-child { border-bottom: none; }
+.bv-life-pos .pr .pos { color: var(--text); }
+.bv-life-pos .pr .pnl.up { color: var(--success); }
+.bv-life-pos .pr .pnl.down { color: var(--danger); }
+.bv-life-pos .pr .reb { color: var(--accent); }
+
+/* Bento card 5 — Multi-account visual */
+.bv-acc { padding: 18px; font-family: 'JetBrains Mono', monospace; }
+.bv-acc-summary {
+  text-align: center;
+  padding: 10px 0 14px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+}
+.bv-acc-summary .l {
+  font-size: 10px;
+  color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+.bv-acc-summary .v {
+  font-size: 26px; font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.bv-acc-summary .d {
+  font-size: 10px; color: var(--success); margin-top: 4px;
+}
+.bv-acc-list { display: flex; flex-direction: column; gap: 6px; }
+.bv-acc-row {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  gap: 8px; align-items: center;
+  padding: 4px 0;
+  font-size: 10px;
+}
+.bv-acc-row .ic {
+  width: 18px; height: 18px;
+  border-radius: 3px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: var(--text-muted); font-weight: 600;
+}
+.bv-acc-row .ic.w {
+  background: rgba(184,255,52,0.05);
+  border-color: rgba(184,255,52,0.2);
+  color: var(--accent);
+}
+.bv-acc-row .nm { color: var(--text); }
+.bv-acc-row .bl { color: var(--text-muted); }
+
+/* Bento card 6 — Rebate ledger visual */
+.bv-rebate { padding: 22px; text-align: center; }
+.bv-rebate .l {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 0.12em;
+  margin-bottom: 10px;
+}
+.bv-rebate .v {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 40px; font-weight: 500;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  text-shadow: 0 0 32px var(--accent-glow);
+  font-feature-settings: 'tnum' 1;
+}
+.bv-rebate .v .c { font-size: 0.5em; vertical-align: top; }
+.bv-rebate .meta {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  margin-bottom: 16px;
+}
+.bv-rebate .meta .a { color: var(--accent); }
+.bv-rebate .ledger {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  display: flex; flex-direction: column; gap: 5px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  text-align: left;
+}
+.bv-rebate .ledger .lr {
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 8px;
+  color: var(--text-muted);
+}
+.bv-rebate .ledger .lr .a { color: var(--accent); }
+
+/* ─────────────────────────────────────────────────────────────
+   Hotkeys section (Unkey "code samples" pattern, adapted)
+───────────────────────────────────────────────────────────── */
+.hotkeys {
+  padding: var(--section) 0;
+  border-top: 1px solid var(--border);
+  background: var(--bg-elev);
+}
+.hk-wrap {
+  background: linear-gradient(180deg, #0E0F11 0%, #0A0B0D 100%);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 24px 48px -16px rgba(0,0,0,0.6);
+}
+.hk-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  padding: 0 8px;
+  background: rgba(255,255,255,0.01);
+}
+.hk-tab {
+  padding: 14px 20px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-weight: 500;
+}
+.hk-tab:hover { color: var(--text); }
+.hk-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.hk-tab .ic {
+  width: 14px; height: 14px;
+  opacity: 0.7;
+}
+.hk-content {
+  padding: 32px;
+  min-height: 360px;
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 32px;
+}
+@media (max-width: 880px) {
+  .hk-content { grid-template-columns: 1fr; }
+}
+.hk-side {
+  display: flex; flex-direction: column;
+  justify-content: center;
+  padding-right: 16px;
+}
+.hk-side h4 {
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+.hk-side p {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 36ch;
+}
+.hk-side .kbd-tip {
+  margin-top: 24px;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  width: fit-content;
+}
+.hk-side .kbd-tip .accent { color: var(--accent); }
+
+.hk-list {
+  display: flex; flex-direction: column;
+  gap: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.hk-row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.hk-row:hover {
+  border-color: rgba(184,255,52,0.2);
+  background: rgba(184,255,52,0.02);
+}
+.hk-keys { display: flex; gap: 4px; }
+.kbd {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 26px; height: 26px;
+  padding: 0 8px;
+  border-radius: 5px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-bright);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text);
+  box-shadow: 0 1px 0 var(--border-bright), inset 0 -2px 0 rgba(255,255,255,0.04);
+}
+.hk-row .desc {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.hk-row .desc strong { color: var(--text); font-weight: 500; }
+.hk-pane { display: none; }
+.hk-pane.active { display: grid; grid-template-columns: 1fr 1.4fr; gap: 32px; }
+@media (max-width: 880px) { .hk-pane.active { grid-template-columns: 1fr; } }
+
+/* ─────────────────────────────────────────────────────────────
+   How it works (3 steps)
+───────────────────────────────────────────────────────────── */
+.how {
+  padding: var(--section) 0;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
+.how-steps {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 16px;
+}
+@media (max-width: 768px) { .how-steps { grid-template-columns: 1fr; } }
+.step-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px 28px;
+  position: relative;
+  transition: border-color 0.2s;
+}
+.step-card:hover { border-color: var(--border-bright); }
+.step-card .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  margin-bottom: 24px;
+  display: flex; align-items: center; gap: 10px;
+}
+.step-card .num::before {
+  content: ''; width: 14px; height: 1px; background: var(--accent);
+}
+.step-card .icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  background: var(--bg);
+  border: 1px solid rgba(184,255,52,0.2);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 18px;
+  color: var(--accent);
+}
+.step-card h4 {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-bottom: 10px;
+}
+.step-card p {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Big quote
+───────────────────────────────────────────────────────────── */
+.bigquote {
+  padding: var(--section) 0;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+.bigquote-text {
+  font-size: clamp(28px, 3.6vw, 44px);
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  max-width: 24ch;
+  margin: 0 auto 40px;
+}
+.bigquote-text em {
+  font-style: italic; font-weight: 500;
+  color: var(--accent);
+  text-shadow: 0 0 24px var(--accent-glow);
+}
+.bigquote-author {
+  display: inline-flex; align-items: center; gap: 14px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.bigquote-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2C2D31, #15161A);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+.bigquote-meta {
+  text-align: left;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+}
+.bigquote-meta .h { color: var(--text); font-size: 13px; font-weight: 500; }
+.bigquote-meta .r { color: var(--text-dim); font-size: 11px; }
+
+/* Compact testimonial trio */
+.t-trio {
+  margin-top: 56px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media (max-width: 880px) { .t-trio { grid-template-columns: 1fr; } }
+.t-mini {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px;
+  text-align: left;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.t-mini:hover { border-color: var(--border-bright); transform: translateY(-2px); }
+.t-mini .q {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text);
+  margin-bottom: 18px;
+}
+.t-mini .q em {
+  font-style: normal;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.92em;
+  color: var(--accent);
+  background: rgba(184,255,52,0.08);
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+.t-mini .au {
+  display: flex; align-items: center; gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+.t-mini .av {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2C2D31, #15161A);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--text-muted);
+  font-weight: 600;
+}
+.t-mini .h {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--text); font-weight: 500;
+}
+.t-mini .r {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--text-dim);
+  margin-top: 2px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Tiers
+───────────────────────────────────────────────────────────── */
+.tiers-section {
+  padding: var(--section) 0;
+  border-top: 1px solid var(--border);
+  background: var(--bg-elev);
+}
+.tiers-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+@media (max-width: 880px) { .tiers-grid { grid-template-columns: 1fr 1fr; } }
+.tier {
+  background: var(--bg);
+  padding: 32px 26px;
+  display: flex; flex-direction: column; gap: 14px;
+  position: relative;
+  transition: background 0.2s;
+}
+.tier:hover { background: var(--bg-card); }
+.tier.popular { background: linear-gradient(180deg, rgba(184,255,52,0.04), var(--bg)); }
+.tier .name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 0.12em;
+}
+.tier .pct {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 44px; font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.tier.popular .pct { color: var(--accent); text-shadow: 0 0 24px var(--accent-glow); }
+.tier .pct .u { font-size: 0.5em; color: var(--text-muted); }
+.tier .vol {
+  font-size: 13px; color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+.tier .div { height: 1px; background: var(--border); margin: 4px 0 8px; }
+.tier .feats { list-style: none; display: flex; flex-direction: column; gap: 9px; font-size: 13px; color: var(--text-muted); }
+.tier .feats li { display: flex; gap: 8px; align-items: flex-start; }
+.tier .feats svg { width: 14px; height: 14px; color: var(--accent); flex-shrink: 0; margin-top: 3px; }
+.tier-badge {
+  position: absolute; top: 14px; right: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.12em;
+  padding: 3px 7px;
+  border: 1px solid rgba(184,255,52,0.3);
+  border-radius: 3px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   FAQ
+───────────────────────────────────────────────────────────── */
+.faq {
+  padding: var(--section) 0;
+  border-top: 1px solid var(--border);
+}
+.faq-list {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex; flex-direction: column;
+  border-top: 1px solid var(--border);
+}
+.faq-item { border-bottom: 1px solid var(--border); }
+.faq-q {
+  width: 100%;
+  padding: 22px 0;
+  background: transparent;
+  border: none;
+  display: flex; justify-content: space-between; align-items: center;
+  text-align: left;
+  cursor: pointer;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  transition: color 0.15s;
+}
+.faq-q:hover { color: var(--accent); }
+.faq-q .icon {
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+  color: var(--text-muted);
+  transition: transform 0.2s, color 0.2s;
+}
+.faq-item.open .faq-q .icon { transform: rotate(45deg); color: var(--accent); }
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.faq-a-inner {
+  padding: 0 0 22px;
+  color: var(--text-muted);
+  font-size: 14.5px;
+  line-height: 1.65;
+  max-width: 64ch;
+}
+.faq-item.open .faq-a { max-height: 400px; }
+.faq-a-inner a {
+  color: var(--accent); text-decoration: none;
+  border-bottom: 1px solid rgba(184,255,52,0.3);
+}
+.faq-a-inner em { color: var(--text); font-style: normal; font-weight: 500; }
+
+/* ─────────────────────────────────────────────────────────────
+   Final CTA — Unkey style: massive centered
+───────────────────────────────────────────────────────────── */
+.cta-final {
+  padding: calc(var(--section) + 40px) 0 calc(var(--section) + 40px);
+  border-top: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center;
+}
+.cta-final::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 70% at 50% 60%, rgba(184,255,52,0.18), transparent 70%),
+    radial-gradient(ellipse 40% 50% at 50% 100%, rgba(184,255,52,0.10), transparent 60%);
+  z-index: -1;
+}
+.cta-final::after {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
+  mask-image: radial-gradient(ellipse 55% 65% at 50% 50%, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 55% 65% at 50% 50%, black 30%, transparent 75%);
+  z-index: -1;
+}
+.cta-final h2 {
+  font-size: clamp(48px, 8.5vw, 116px);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 0.94;
+  margin: 0 auto 28px;
+  max-width: 16ch;
+}
+.cta-final h2 em {
+  font-style: italic; font-weight: 500;
+  background: linear-gradient(180deg, var(--accent) 30%, var(--accent-bright));
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 40px var(--accent-glow);
+}
+.cta-final p {
+  font-size: 17px;
+  color: var(--text-muted);
+  max-width: 54ch;
+  margin: 0 auto 36px;
+  line-height: 1.55;
+}
+.cta-final .btns {
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+}
+.cta-final .btn-primary {
+  position: relative;
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 var(--accent-glow); }
+  50% { box-shadow: 0 0 32px var(--accent-glow-strong); }
+}
+.cta-microcopy {
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--text-dim);
+  font-family: 'JetBrains Mono', monospace;
+}
+.cta-microcopy a {
+  color: var(--accent); text-decoration: none;
+  border-bottom: 1px solid rgba(184,255,52,0.25);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Footer
+───────────────────────────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 64px 0 32px;
+  background: var(--bg);
+}
+.foot-grid {
+  display: grid;
+  grid-template-columns: 1.5fr repeat(4, 1fr);
+  gap: 32px;
+  margin-bottom: 56px;
+}
+@media (max-width: 768px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+.foot-brand {
+  font-size: 13px; color: var(--text-muted);
+  line-height: 1.55; max-width: 28ch;
+  margin-top: 16px;
+}
+.foot-col h5 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--text-dim);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 16px; font-weight: 500;
+}
+.foot-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.foot-col a { color: var(--text-muted); text-decoration: none; font-size: 13.5px; transition: color 0.15s; }
+.foot-col a:hover { color: var(--text); }
+.foot-bottom {
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--text-dim);
+  flex-wrap: wrap; gap: 16px;
+}
+.foot-bottom .status { display: inline-flex; align-items: center; gap: 6px; }
+.foot-bottom .status .dot {
+  width: 6px; height: 6px;
+  background: var(--accent); border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Reveal
+───────────────────────────────────────────────────────────── */
+.reveal {
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.6, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+.reveal.in { opacity: 1; transform: translateY(0); }
+.reveal-stagger > * {
+  opacity: 0; transform: translateY(12px);
+  transition: opacity 0.7s cubic-bezier(0.2, 0.6, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+.reveal-stagger.in > * { opacity: 1; transform: translateY(0); }
+.reveal-stagger.in > *:nth-child(1) { transition-delay: 0.05s; }
+.reveal-stagger.in > *:nth-child(2) { transition-delay: 0.12s; }
+.reveal-stagger.in > *:nth-child(3) { transition-delay: 0.20s; }
+.reveal-stagger.in > *:nth-child(4) { transition-delay: 0.28s; }
+.reveal-stagger.in > *:nth-child(5) { transition-delay: 0.36s; }
+.reveal-stagger.in > *:nth-child(6) { transition-delay: 0.44s; }
+
+::selection { background: rgba(184,255,52,0.3); color: var(--text); }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo"><span class="logo-mark"></span>ReboundX</a>
+    <ul class="nav-links">
+      <li><a href="#features">Terminal</a></li>
+      <li><a href="#hotkeys">Hotkeys</a></li>
+      <li><a href="#how">Rebates</a></li>
+      <li><a href="#tiers">Tiers</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-ghost">Sign in</a>
+      <a href="#cta-final" class="btn btn-primary">Open terminal</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════ HERO (centered) ═══════════ -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="container">
+    <a href="#how" class="chip hero-chip">
+      <span class="dot"></span>
+      <span>$14.2M paid back to traders · live</span>
+      <span class="arrow">→</span>
+    </a>
+
+    <h1>The terminal that <em>pays you back.</em></h1>
+
+    <p class="lead">
+      Trade across 18 exchanges from one keyboard-first workspace.
+      Route up to 50% of your trading fees back as rebates — automatically, on every fill.
+    </p>
+
+    <div class="hero-cta">
+      <a href="#cta-final" class="btn btn-primary btn-large">
+        Open the terminal — free
+        <svg class="btn-arrow" width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10m0 0L9 4m4 4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href="#tiers" class="btn btn-ghost btn-large">Calculate your rebate</a>
+    </div>
+
+    <div class="hero-trust">
+      <span><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Read-only API keys</span>
+      <span><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Self-custody on DEX</span>
+      <span><svg class="check" viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>No card required</span>
+    </div>
+
+    <!-- Hero terminal — centered below -->
+    <div class="hero-terminal-wrap">
+      <div class="terminal" id="hero-terminal">
+        <div class="terminal-bar">
+          <span class="tb-dots"><span class="tb-dot"></span><span class="tb-dot"></span><span class="tb-dot"></span></span>
+          <span class="tb-title">trading-studio · BTC-USDT · cross-exchange compare</span>
+          <span class="tb-status"><span class="dot"></span><span class="live">live</span><span>· 47ms</span></span>
+        </div>
+
+        <div class="terminal-body">
+          <div class="exch-col">
+            <div class="exch-head"><span class="name">Binance</span><span style="color: var(--text-dim); font-size: 9px;">spot</span></div>
+            <div class="book">
+              <div class="row ask" style="--depth: 28%;"><span class="price">68,742.30</span><span class="qty">0.412</span></div>
+              <div class="row ask" style="--depth: 42%;"><span class="price">68,741.10</span><span class="qty">0.890</span></div>
+              <div class="row ask" style="--depth: 18%;"><span class="price">68,740.20</span><span class="qty">0.205</span></div>
+              <div class="spread-row"><span>spread</span><span style="color: var(--text);">0.10</span></div>
+              <div class="row bid" style="--depth: 22%;"><span class="price">68,740.10</span><span class="qty">0.318</span></div>
+              <div class="row bid" style="--depth: 38%;"><span class="price">68,739.60</span><span class="qty">0.742</span></div>
+              <div class="row bid" style="--depth: 28%;"><span class="price">68,738.40</span><span class="qty">0.501</span></div>
+            </div>
+          </div>
+          <div class="exch-col best">
+            <div class="exch-head"><span class="name">Bybit</span><span class="badge">best ask</span></div>
+            <div class="book">
+              <div class="row ask" style="--depth: 30%;"><span class="price">68,741.80</span><span class="qty">0.534</span></div>
+              <div class="row ask" style="--depth: 48%;"><span class="price">68,740.40</span><span class="qty">1.120</span></div>
+              <div class="row ask" id="best-ask" style="--depth: 40%;"><span class="price">68,739.50</span><span class="qty">0.880</span></div>
+              <div class="spread-row"><span>spread</span><span style="color: var(--accent);">0.05</span></div>
+              <div class="row bid" style="--depth: 32%;"><span class="price">68,739.45</span><span class="qty">0.645</span></div>
+              <div class="row bid" style="--depth: 26%;"><span class="price">68,738.90</span><span class="qty">0.412</span></div>
+              <div class="row bid" style="--depth: 22%;"><span class="price">68,737.60</span><span class="qty">0.318</span></div>
+            </div>
+          </div>
+          <div class="exch-col">
+            <div class="exch-head"><span class="name">Hyperliquid</span><span style="color: var(--text-dim); font-size: 9px;">perp</span></div>
+            <div class="book">
+              <div class="row ask" style="--depth: 24%;"><span class="price">68,742.00</span><span class="qty">0.380</span></div>
+              <div class="row ask" style="--depth: 36%;"><span class="price">68,741.20</span><span class="qty">0.612</span></div>
+              <div class="row ask" style="--depth: 22%;"><span class="price">68,740.80</span><span class="qty">0.290</span></div>
+              <div class="spread-row"><span>fund</span><span style="color: var(--success);">+0.012%</span></div>
+              <div class="row bid" style="--depth: 28%;"><span class="price">68,739.20</span><span class="qty">0.502</span></div>
+              <div class="row bid" style="--depth: 44%;"><span class="price">68,738.40</span><span class="qty">0.880</span></div>
+              <div class="row bid" style="--depth: 18%;"><span class="price">68,737.10</span><span class="qty">0.218</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="terminal-footer">
+          <div class="tf-route">
+            route <span class="v">2.0 BTC</span><span class="arrow">→</span><span class="v">Bybit</span><span class="arrow">·</span><span>fee 0.018%</span>
+          </div>
+          <div class="tf-rebate">
+            <svg viewBox="0 0 16 16" fill="none">
+              <path d="M8 1v14M3 6l5-5 5 5M3 10l5 5 5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.4"/>
+              <circle cx="8" cy="8" r="3" fill="currentColor"/>
+            </svg>
+            <span>+ <span id="rebate-counter">$24.86</span> rebate</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ TRUSTED BY (logos) ═══════════ -->
+<section class="trusted">
+  <div class="container">
+    <div class="trusted-label">Connects where you already trade · 18 venues</div>
+    <div class="trusted-logos reveal-stagger">
+      <div class="logo-cell">Binance</div>
+      <div class="logo-cell">Bybit</div>
+      <div class="logo-cell">OKX</div>
+      <div class="logo-cell">Bitget</div>
+      <div class="logo-cell">Upbit</div>
+      <div class="logo-cell">Kraken</div>
+      <div class="logo-cell">Hyperliquid</div>
+      <div class="logo-cell">dYdX</div>
+      <div class="logo-cell">GMX</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ STATS ═══════════ -->
+<section class="stats">
+  <div class="container">
+    <div class="stats-grid reveal-stagger">
+      <div class="stat">
+        <div class="label">Cumulative volume</div>
+        <div class="value mono">$<span data-count="4.8" data-decimals="1">0</span><span class="unit">B+</span></div>
+      </div>
+      <div class="stat">
+        <div class="label">Rebates returned</div>
+        <div class="value mono accent">$<span data-count="14.2" data-decimals="1">0</span><span class="unit">M</span></div>
+      </div>
+      <div class="stat">
+        <div class="label">Active traders</div>
+        <div class="value mono"><span data-count="23400" data-decimals="0">0</span>+</div>
+      </div>
+      <div class="stat">
+        <div class="label">Median fill latency</div>
+        <div class="value mono"><span data-count="47" data-decimals="0">0</span><span class="unit">ms</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ BENTO FEATURES ═══════════ -->
+<section class="bento-section" id="features">
+  <div class="container">
+    <header class="section-header reveal">
+      <div class="section-eyebrow">Terminal</div>
+      <h2 class="section-title">Built for the way you <em>actually trade.</em></h2>
+      <p class="section-lead">Six things that turn cross-exchange trading from a 6-tab juggle into a single keyboard.</p>
+    </header>
+
+    <div class="bento reveal-stagger">
+
+      <!-- Card 1 — Unified market (wide) -->
+      <div class="bento-card span-2">
+        <div class="bc-text">
+          <div class="bc-eyebrow">01 · UNIFIED MARKET VIEW</div>
+          <h3 class="bc-title">Compare every market across every venue, in a glance.</h3>
+          <p class="bc-body">Side-by-side order books, spreads, depth, and funding — best venue highlighted before you click. Stop guessing which exchange to fire.</p>
+        </div>
+        <div class="bc-visual">
+          <div class="bv-compare">
+            <div class="col">
+              <div class="ex">Binance · ask</div>
+              <div class="px" style="color: var(--danger);">68,740.20</div>
+              <div class="meta">depth 0.41</div>
+            </div>
+            <div class="col best">
+              <div class="ex">Bybit · best</div>
+              <div class="px">68,739.50</div>
+              <div class="meta">depth 0.88</div>
+            </div>
+            <div class="col">
+              <div class="ex">Hyperliquid</div>
+              <div class="px" style="color: var(--danger);">68,740.80</div>
+              <div class="meta">fund +0.012%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 — Smart routing (narrow) -->
+      <div class="bento-card">
+        <div class="bc-text">
+          <div class="bc-eyebrow">02 · SMART ROUTING</div>
+          <h3 class="bc-title">Best price, depth, and fee — surfaced.</h3>
+          <p class="bc-body">Every venue scored per order. Includes maker/taker tier and your rebate share.</p>
+        </div>
+        <div class="bc-visual">
+          <div class="bv-route">
+            <div class="bv-route-head"><span>route · 2.0 BTC</span><span>scored</span></div>
+            <div class="bv-route-row best"><span class="ex">Bybit</span><span class="bar" style="--w: 92%;"></span><span class="px">+$2.60</span></div>
+            <div class="bv-route-row"><span class="ex">Binance</span><span class="bar" style="--w: 76%;"></span><span class="px">—</span></div>
+            <div class="bv-route-row"><span class="ex">Hyperliquid</span><span class="bar" style="--w: 64%;"></span><span class="px">—</span></div>
+            <div class="bv-route-row"><span class="ex">OKX</span><span class="bar" style="--w: 52%;"></span><span class="px">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 — State-driven (narrow) -->
+      <div class="bento-card">
+        <div class="bc-text">
+          <div class="bc-eyebrow">03 · STATE-DRIVEN</div>
+          <h3 class="bc-title">UI changes based on what you're doing.</h3>
+          <p class="bc-body">Disconnected → discover. Connected → execute. One product, two states, zero clutter.</p>
+        </div>
+        <div class="bc-visual">
+          <div class="bv-state">
+            <div class="bv-state-pills">
+              <span class="p">Disconnected</span>
+              <span class="p active">Connected · Bybit</span>
+            </div>
+            <div class="bv-state-ticket">
+              <div class="row"><span class="l">market</span><span class="r">BTC-USDT</span></div>
+              <div class="row"><span class="l">size</span><span class="r">2.0 BTC</span></div>
+              <div class="row"><span class="l">fee</span><span class="r">0.018%</span></div>
+              <div class="row"><span class="l">rebate</span><span class="r accent">+$24.86</span></div>
+              <div class="btns"><span class="b buy">Buy ⌘B</span><span class="b sell">Sell ⌘S</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 — Lifecycle (wide) -->
+      <div class="bento-card span-2">
+        <div class="bc-text">
+          <div class="bc-eyebrow">04 · CONTINUOUS LIFECYCLE</div>
+          <h3 class="bc-title">Discovery, execution, PnL — same workflow.</h3>
+          <p class="bc-body">Open positions stay attached to the chart and signal that opened them. Rebates accrue inline — no separate dashboard, no monthly report.</p>
+        </div>
+        <div class="bc-visual">
+          <div class="bv-life">
+            <div class="bv-life-stages">
+              <div class="bv-life-stage">
+                <div class="bv-life-icon"><svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+                <div class="lab">Discover</div>
+              </div>
+              <div class="bv-life-stage">
+                <div class="bv-life-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="lab">Execute</div>
+              </div>
+              <div class="bv-life-stage">
+                <div class="bv-life-icon"><svg viewBox="0 0 16 16" fill="none"><path d="M3 12l3-3 3 3 4-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                <div class="lab">Track</div>
+              </div>
+            </div>
+            <div class="bv-life-pos">
+              <div class="ph"><span>position</span><span>size</span><span>pnl</span><span>rebate</span></div>
+              <div class="pr"><span class="pos">BTC long</span><span>2.0</span><span class="pnl up">+$842.10</span><span class="reb">+$24.86</span></div>
+              <div class="pr"><span class="pos">ETH short</span><span>15.5</span><span class="pnl down">−$120.40</span><span class="reb">+$8.10</span></div>
+              <div class="pr"><span class="pos">SOL long</span><span>120</span><span class="pnl up">+$1,204.30</span><span class="reb">+$15.42</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 — Multi-account (narrow) -->
+      <div class="bento-card">
+        <div class="bc-text">
+          <div class="bc-eyebrow">05 · MULTI-ACCOUNT</div>
+          <h3 class="bc-title">Every CEX sub-account and wallet, one keyboard.</h3>
+          <p class="bc-body">Aggregate balances and PnL across CEX accounts and self-custodied wallets.</p>
+        </div>
+        <div class="bc-visual">
+          <div class="bv-acc">
+            <div class="bv-acc-summary">
+              <div class="l">Total portfolio</div>
+              <div class="v">$1,284,420</div>
+              <div class="d">↑ $24,810 · 24h</div>
+            </div>
+            <div class="bv-acc-list">
+              <div class="bv-acc-row"><span class="ic">B</span><span class="nm">Bybit · main</span><span class="bl">$420,180</span></div>
+              <div class="bv-acc-row"><span class="ic">B</span><span class="nm">Binance · alpha</span><span class="bl">$284,210</span></div>
+              <div class="bv-acc-row"><span class="ic w">⬣</span><span class="nm">Hyperliquid · 0x4f...c2a8</span><span class="bl">$285,610</span></div>
+              <div class="bv-acc-row"><span class="ic w">⬣</span><span class="nm">GMX · 0x8a...f1e3</span><span class="bl">$134,000</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6 — Rebate engine (wide) -->
+      <div class="bento-card span-2">
+        <div class="bc-text">
+          <div class="bc-eyebrow">06 · REBATE ENGINE</div>
+          <h3 class="bc-title">Up to 50% of your fees, back. Every Friday.</h3>
+          <p class="bc-body">Rebates accrue per-fill, settle weekly, pay in USDT. No claim flow, no minimum, no expiry. Send to any wallet you control.</p>
+        </div>
+        <div class="bc-visual no-border">
+          <div class="bv-rebate">
+            <div class="l">Earned this month</div>
+            <div class="v">$<span class="c"></span><span id="bv-rebate-v">3,284.20</span></div>
+            <div class="meta"><span class="a">+$24.86</span> · last fill · 2 sec ago</div>
+            <div class="ledger">
+              <div class="lr"><span>Friday payout · 2026-05-08</span><span class="a">+$842.10</span></div>
+              <div class="lr"><span>Friday payout · 2026-05-01</span><span class="a">+$1,204.30</span></div>
+              <div class="lr"><span>Friday payout · 2026-04-24</span><span class="a">+$1,237.80</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ HOTKEYS (tabbed, Unkey "code samples" pattern) ═══════════ -->
+<section class="hotkeys" id="hotkeys">
+  <div class="container">
+    <header class="section-header reveal">
+      <div class="section-eyebrow">Keyboard-first</div>
+      <h2 class="section-title">Every action has a <em>hotkey.</em></h2>
+      <p class="section-lead">If your hands leave the keyboard, you're losing time. Every primary action — order entry, market switching, position close — is one keystroke away.</p>
+    </header>
+
+    <div class="hk-wrap reveal">
+      <div class="hk-tabs">
+        <button class="hk-tab active" data-tab="orders">
+          <svg class="ic" viewBox="0 0 16 16" fill="none"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Orders
+        </button>
+        <button class="hk-tab" data-tab="markets">
+          <svg class="ic" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Markets
+        </button>
+        <button class="hk-tab" data-tab="positions">
+          <svg class="ic" viewBox="0 0 16 16" fill="none"><path d="M3 12l3-3 3 3 4-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Positions
+        </button>
+        <button class="hk-tab" data-tab="layout">
+          <svg class="ic" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+          Layout
+        </button>
+      </div>
+
+      <!-- Orders pane -->
+      <div class="hk-content hk-pane active" data-pane="orders">
+        <div class="hk-side">
+          <h4>Fire orders without leaving the keyboard.</h4>
+          <p>Buy at best, sell at best, modify, cancel — all one keystroke. Modifier keys override smart routing or split across venues.</p>
+          <div class="kbd-tip"><span class="accent">⌘K</span><span>opens command palette</span></div>
+        </div>
+        <div class="hk-list">
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">B</span></div><span class="desc"><strong>Buy</strong> at best ask · auto-routed</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">S</span></div><span class="desc"><strong>Sell</strong> at best bid · auto-routed</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">⌘</span><span class="kbd">B</span></div><span class="desc"><strong>Buy</strong> · open full ticket with size + venue</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">⌘</span><span class="kbd">R</span></div><span class="desc"><strong>Override route</strong> · pick a venue manually</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">⌘</span><span class="kbd">X</span></div><span class="desc"><strong>Cancel all</strong> open orders for current pair</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">M</span></div><span class="desc"><strong>Modify</strong> last order · price + size inline</span></div>
+        </div>
+      </div>
+
+      <!-- Markets pane -->
+      <div class="hk-content hk-pane" data-pane="markets">
+        <div class="hk-side">
+          <h4>Switch markets, venues, and watchlists at speed.</h4>
+          <p>Cycle through your watchlist, jump to any pair by ticker, or compare three exchanges side by side without losing your place.</p>
+          <div class="kbd-tip"><span class="accent">/</span><span>focus search · type ticker</span></div>
+        </div>
+        <div class="hk-list">
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">/</span></div><span class="desc"><strong>Search</strong> · jump to any pair by ticker</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">J</span></div><span class="desc"><strong>Next pair</strong> in watchlist</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">K</span></div><span class="desc"><strong>Previous pair</strong> in watchlist</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">⌘</span><span class="kbd">1</span></div><span class="desc"><strong>Switch venue</strong> to slot 1 · Bybit</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">⌘</span><span class="kbd">2</span></div><span class="desc"><strong>Switch venue</strong> to slot 2 · Binance</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">C</span></div><span class="desc"><strong>Compare mode</strong> · 3 venues side-by-side</span></div>
+        </div>
+      </div>
+
+      <!-- Positions pane -->
+      <div class="hk-content hk-pane" data-pane="positions">
+        <div class="hk-side">
+          <h4>Manage every open position with two fingers.</h4>
+          <p>Close, flip, reduce, or set TP/SL inline — without leaving the position panel. Funding and rebates update in real time.</p>
+          <div class="kbd-tip"><span class="accent">P</span><span>opens position drawer</span></div>
+        </div>
+        <div class="hk-list">
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">P</span></div><span class="desc"><strong>Open position drawer</strong> · all venues</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">X</span></div><span class="desc"><strong>Close current position</strong> at market</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">⌘</span><span class="kbd">X</span></div><span class="desc"><strong>Close all positions</strong> · all venues</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">F</span></div><span class="desc"><strong>Flip</strong> direction · close + reverse</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">T</span></div><span class="desc"><strong>Set TP/SL</strong> inline · drag on chart</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">⌘</span><span class="kbd">L</span></div><span class="desc"><strong>Add to position</strong> · pyramid in</span></div>
+        </div>
+      </div>
+
+      <!-- Layout pane -->
+      <div class="hk-content hk-pane" data-pane="layout">
+        <div class="hk-side">
+          <h4>Workspace layouts that follow your trade flow.</h4>
+          <p>Save and recall workspace presets per strategy. Per-pair memory remembers the layout you last used for BTC vs ETH.</p>
+          <div class="kbd-tip"><span class="accent">⌘⇧K</span><span>cycle workspace presets</span></div>
+        </div>
+        <div class="hk-list">
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">⌘</span><span class="kbd">⇧</span><span class="kbd">1</span></div><span class="desc"><strong>Workspace</strong> · scalp · 4 charts + ladder</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">⌘</span><span class="kbd">⇧</span><span class="kbd">2</span></div><span class="desc"><strong>Workspace</strong> · perp · funding + OI</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">⌘</span><span class="kbd">⇧</span><span class="kbd">3</span></div><span class="desc"><strong>Workspace</strong> · arb · 3 venues + spread</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">⌘</span><span class="kbd">D</span></div><span class="desc"><strong>Detach panel</strong> to a new monitor</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">⌘</span><span class="kbd">,</span></div><span class="desc"><strong>Settings</strong> · hotkeys, theme, payouts</span></div>
+          <div class="hk-row"><div class="hk-keys"><span class="kbd">?</span></div><span class="desc"><strong>Show all hotkeys</strong> · in-app cheat sheet</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ HOW REBATES WORK ═══════════ -->
+<section class="how" id="how">
+  <div class="container">
+    <header class="section-header reveal">
+      <div class="section-eyebrow">Rebates</div>
+      <h2 class="section-title">Three steps. Up to 50% <em>back.</em></h2>
+      <p class="section-lead">ReboundX shares the rebate the exchange already pays for your volume — paid back to you in stablecoin, every Friday.</p>
+    </header>
+
+    <div class="how-steps reveal-stagger">
+      <div class="step-card">
+        <div class="num">STEP 01</div>
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <path d="M11 4v14M4 11h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h4>Sign up via ReboundX</h4>
+        <p>Open or link your exchange account through our referral. 30 seconds. Works on Binance, Bybit, OKX, Bitget, Upbit, and 13 others.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="num">STEP 02</div>
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <path d="M3 14l4-4 3 3 5-7M14 6h5v5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h4>Trade on Trading Studio</h4>
+        <p>Use the unified terminal. Every fill — maker or taker, spot or perp — flows through the same rebate-aware fee model.</p>
+      </div>
+
+      <div class="step-card">
+        <div class="num">STEP 03</div>
+        <div class="icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <path d="M11 3v14M6 12l5 5 5-5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h4>Get paid every Friday</h4>
+        <p>Up to 50% of your trading fees returned in USDT. No claim flow, no minimum. Sends to a wallet you control.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ BIG QUOTE + TESTIMONIAL TRIO ═══════════ -->
+<section class="bigquote">
+  <div class="container-narrow">
+    <p class="bigquote-text reveal">
+      "I cut my per-trade decision time from <em>~40s to ~8s.</em> The rebate is gravy — I came for the terminal."
+    </p>
+    <div class="bigquote-author reveal">
+      <div class="bigquote-avatar">CD</div>
+      <div class="bigquote-meta">
+        <div class="h">@cryptodelta_</div>
+        <div class="r">Multi-exchange trader · $2.1M monthly volume</div>
+      </div>
+    </div>
+
+    <div class="t-trio reveal-stagger">
+      <div class="t-mini">
+        <p class="q">"Funding compare across Hyperliquid + GMX + Drift in one panel. <em>$8,420 in rebates</em> last quarter on top of saved spread."</p>
+        <div class="au">
+          <div class="av">MZ</div>
+          <div>
+            <div class="h">@mz_perpdegen</div>
+            <div class="r">Perp-native · HL leaderboard</div>
+          </div>
+        </div>
+      </div>
+      <div class="t-mini">
+        <p class="q">"OI, funding, basis side-by-side with execution. I cancelled <em>two other tools</em>. Hotkey layer is what hooked me."</p>
+        <div class="au">
+          <div class="av">RV</div>
+          <div>
+            <div class="h">@runevolatility</div>
+            <div class="r">Quant · 4-CEX desk</div>
+          </div>
+        </div>
+      </div>
+      <div class="t-mini">
+        <p class="q">"Connected three CEX sub-accounts and four wallets in 8 minutes. <em>$1,840/mo</em> in rebates I wasn't getting before."</p>
+        <div class="au">
+          <div class="av">AK</div>
+          <div>
+            <div class="h">@anonkrypto</div>
+            <div class="r">Multi-account · arb desk</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ TIERS ═══════════ -->
+<section class="tiers-section" id="tiers">
+  <div class="container">
+    <header class="section-header reveal">
+      <div class="section-eyebrow">Tiers</div>
+      <h2 class="section-title">Your monthly volume sets your <em>rebate.</em></h2>
+      <p class="section-lead">No subscription. No minimums. The terminal is free — we earn from rebate-share with partner exchanges, and you keep most of it.</p>
+    </header>
+
+    <div class="tiers-grid reveal-stagger">
+      <div class="tier">
+        <div class="name">Starter</div>
+        <div class="pct">25<span class="u">%</span></div>
+        <div class="vol">&lt; $100K monthly volume</div>
+        <div class="div"></div>
+        <ul class="feats">
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Full terminal access</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>3 sub-accounts</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Weekly USDT payout</li>
+        </ul>
+      </div>
+      <div class="tier">
+        <div class="name">Active</div>
+        <div class="pct">35<span class="u">%</span></div>
+        <div class="vol">$100K – $1M monthly</div>
+        <div class="div"></div>
+        <ul class="feats">
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in Starter</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>5 sub-accounts</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Priority data feeds</li>
+        </ul>
+      </div>
+      <div class="tier popular">
+        <span class="tier-badge">Most popular</span>
+        <div class="name">Pro</div>
+        <div class="pct">45<span class="u">%</span></div>
+        <div class="vol">$1M – $10M monthly</div>
+        <div class="div"></div>
+        <ul class="feats">
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in Active</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>8 sub-accounts</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Smart routing engine</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Daily payout option</li>
+        </ul>
+      </div>
+      <div class="tier">
+        <div class="name">Whale</div>
+        <div class="pct">50<span class="u">%</span></div>
+        <div class="vol">$10M+ monthly</div>
+        <div class="div"></div>
+        <ul class="feats">
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Everything in Pro</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Unlimited sub-accounts</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Direct line to founders</li>
+          <li><svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Custom rebate negotiation</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FAQ ═══════════ -->
+<section class="faq" id="faq">
+  <div class="container">
+    <header class="section-header reveal">
+      <div class="section-eyebrow">FAQ</div>
+      <h2 class="section-title">Things traders ask before <em>connecting.</em></h2>
+    </header>
+
+    <div class="faq-list reveal">
+      <div class="faq-item open">
+        <button class="faq-q">
+          <span>Do you ever hold my funds or my private keys?</span>
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">No. CEX connections use API keys <em>you</em> generate, with IP whitelisting and withdrawal disabled by default. Perp DEX trading signs locally with your own wallet — we never see the seed. API keys are encrypted with a per-user key and visible in your in-app audit log.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Is execution actually faster than the native exchange app?</span>
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Median order placement is <em>47ms</em>, measured at the gateway. Co-located WebSocket feeds, no UI render overhead, hotkeys default-on. You can run the latency benchmark inside the terminal — it pings every connected venue and shows the trace.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Which exchanges and DEXs are supported?</span>
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">18 venues today: Binance, Bybit, OKX, Bitget, Upbit, Kraken, Kucoin, Gate.io, Mexc on the CEX side; Hyperliquid, dYdX, GMX, Drift, Vertex, Aevo, Paradex, Apex, Backpack on the perp DEX side. New venues ship every 4–6 weeks based on user votes — <a href="#">see the queue</a>.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>How is this different from Coinglass, Hyperdash, or TradingView?</span>
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Those tools each do one job — data, charts, or signals. ReboundX is the only workspace that unifies cross-exchange data <em>and</em> execution <em>and</em> position lifecycle <em>and</em> rebates in a single keyboard-driven terminal. <a href="#">Side-by-side comparison →</a></div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>What does it actually cost?</span>
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Free. No subscription, no card, no minimums. We earn from rebate-share with partner exchanges — your fees stay the same as native, and you receive 25–50% back depending on your monthly volume tier (see <a href="#tiers">tiers above</a>).</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>How and when do I receive my rebates?</span>
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Rebates accrue per-fill in real time, settle weekly, and pay out every Friday in USDT. Send to any wallet you control on Ethereum, Arbitrum, Solana, or Base. Pro and Whale tiers can opt for daily payout. No claim flow, no minimum, no expiry.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>What happens if a feed lags during volatility?</span>
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Redundant WebSocket connections per exchange (primary + 2 fallbacks). Stale-data warnings on every panel when a feed exceeds 200ms drift. One hotkey (<em>⌘+F</em>) falls back to direct-exchange routing. Live status at <a href="#">status.reboundx.io</a>.</div></div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-q">
+          <span>Can I bring TradingView charts and webhook alerts?</span>
+          <svg class="icon" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Yes. TradingView charts embed natively — saved layouts and indicators carry over. Webhook alerts ingest from TradingView, Coinalyze, or custom sources. Read-only API ships today; write API is on the Q3 roadmap.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FINAL CTA — massive, Unkey-style ═══════════ -->
+<section class="cta-final" id="cta-final">
+  <div class="container">
+    <h2>Stop running six tabs. <em>Start earning.</em></h2>
+    <p>Connect your first exchange in 30 seconds. Read-only API key works. No card. Disconnect any time, no data retained.</p>
+    <div class="btns">
+      <a href="#" class="btn btn-primary btn-large">
+        Open the terminal — free
+        <svg class="btn-arrow" width="14" height="14" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10m0 0L9 4m4 4l-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a href="#" class="btn btn-ghost btn-large">Read the docs</a>
+    </div>
+    <div class="cta-microcopy">
+      Or <a href="#">join the Discord →</a> · 23,400+ traders already connected
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <a href="#" class="logo"><span class="logo-mark"></span>ReboundX</a>
+        <p class="foot-brand">Trading terminal + rebate engine. One workspace, every venue, fees back on every fill.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Product</h5>
+        <ul>
+          <li><a href="#">Trading Studio</a></li>
+          <li><a href="#">Rebates</a></li>
+          <li><a href="#">Smart routing</a></li>
+          <li><a href="#">Roadmap</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Resources</h5>
+        <ul>
+          <li><a href="#">Docs</a></li>
+          <li><a href="#">API</a></li>
+          <li><a href="#">Status</a></li>
+          <li><a href="#">Changelog</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Security</a></li>
+          <li><a href="#">Privacy</a></li>
+          <li><a href="#">Terms</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h5>Connect</h5>
+        <ul>
+          <li><a href="#">Discord</a></li>
+          <li><a href="#">X / Twitter</a></li>
+          <li><a href="#">Telegram</a></li>
+          <li><a href="#">Email</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot-bottom">
+      <span>© 2026 ReboundX Labs · Trading involves risk · Not financial advice</span>
+      <span class="status"><span class="dot"></span>All systems operational · 99.97% uptime</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* Nav scroll state */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 8);
+}, { passive: true });
+
+/* Reveal on scroll */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -10% 0px' });
+document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => io.observe(el));
+
+/* Count-up */
+function animateCount(el) {
+  const target = parseFloat(el.dataset.count);
+  const decimals = parseInt(el.dataset.decimals || '0');
+  const duration = 1400;
+  const start = performance.now();
+  const easeOut = t => 1 - Math.pow(1 - t, 3);
+  function tick(now) {
+    const t = Math.min(1, (now - start) / duration);
+    const v = target * easeOut(t);
+    if (decimals === 0 && target >= 1000) {
+      el.textContent = Math.round(v).toLocaleString();
+    } else {
+      el.textContent = v.toFixed(decimals);
+    }
+    if (t < 1) requestAnimationFrame(tick);
+    else {
+      if (decimals === 0 && target >= 1000) el.textContent = Math.round(target).toLocaleString();
+      else el.textContent = target.toFixed(decimals);
+    }
+  }
+  requestAnimationFrame(tick);
+}
+const countIO = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('[data-count]').forEach(animateCount);
+      countIO.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.4 });
+document.querySelectorAll('.stats-grid').forEach(el => countIO.observe(el));
+
+/* Hero ticker animation */
+const askEl = document.querySelector('#best-ask .price');
+const rebateEl = document.getElementById('rebate-counter');
+const bvRebateEl = document.getElementById('bv-rebate-v');
+let askBase = 68739.50;
+let rebateBase = 24.86;
+let bvRebateBase = 3284.20;
+setInterval(() => {
+  const delta = (Math.random() - 0.5) * 0.4;
+  askBase += delta;
+  if (askEl) {
+    askEl.textContent = askBase.toFixed(2);
+    askEl.style.color = delta > 0 ? 'var(--success)' : 'var(--danger)';
+    setTimeout(() => { if (askEl) askEl.style.color = ''; }, 280);
+  }
+  rebateBase += Math.random() * 0.04;
+  if (rebateEl) rebateEl.textContent = '$' + rebateBase.toFixed(2);
+  bvRebateBase += Math.random() * 0.08;
+  if (bvRebateEl) bvRebateEl.textContent = bvRebateBase.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}, 2400);
+
+/* Hotkeys tabs */
+document.querySelectorAll('.hk-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.hk-tab').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.hk-pane').forEach(p => p.classList.toggle('active', p.dataset.pane === tab));
+  });
+});
+
+/* FAQ accordion */
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(o => o.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  });
+});
+
+/* Smooth scroll */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const href = a.getAttribute('href');
+    if (href && href.length > 1) {
+      const t = document.querySelector(href);
+      if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    }
+  });
+});
+</script>
+</body>
+</html>
