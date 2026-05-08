@@ -1,4 +1,5 @@
 import { useSmoothScroll } from '@/shared/hooks/useSmoothScroll';
+import { TickerProvider } from '@/shared/context/TickerContext';
 import Nav from './components/Nav';
 import Hero from './components/Hero';
 import TrustedBy from './components/TrustedBy';
@@ -16,7 +17,7 @@ export default function Landing() {
   useSmoothScroll();
 
   return (
-    <>
+    <TickerProvider>
       <Nav />
       <Hero />
       <TrustedBy />
@@ -29,6 +30,6 @@ export default function Landing() {
       <FAQ />
       <FinalCTA />
       <Footer />
-    </>
+    </TickerProvider>
   );
 }

@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useScrollReveal } from '@/shared/hooks/useScrollReveal';
 import SectionHeader from './SectionHeader';
 import { Plus } from '@/shared/ui/icons/LandingIcons';
-import { faqs } from '@/features/landing/data/content';
+import { faqs } from '@/features/landing/data/faqs';
 
 export default function FAQ() {
-  const [open, setOpen] = useState(0);
+  const [open, setOpen] = useState(-1);
   const ref = useScrollReveal<HTMLDivElement>();
 
   return (

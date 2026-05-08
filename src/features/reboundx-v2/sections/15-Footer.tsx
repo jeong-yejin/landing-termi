@@ -1,23 +1,6 @@
-const cols = [
-  {
-    h: 'Product',
-    links: ['Terminal', 'Exchanges', 'Rebates', 'Pro', 'Pricing', 'Changelog', 'Roadmap'],
-  },
-  {
-    h: 'Developers',
-    links: ['Local API', 'Bot bridge', 'Docs', 'Status', 'GitHub'],
-  },
-  {
-    h: 'Company',
-    links: ['About', 'Manifesto', 'Press kit', 'Careers', 'Contact'],
-  },
-  {
-    h: 'Legal',
-    links: ['Privacy', 'Terms', 'Risk disclosure', 'Disclosures'],
-  },
-];
+import { footerCols } from '../data/footer';
 
-export default function RxFooter() {
+export default function Footer() {
   return (
     <footer className="rx-footer">
       <div className="rx-container">
@@ -25,11 +8,11 @@ export default function RxFooter() {
           <div className="rx-footer-brand">
             <div className="logo"><span className="mark">R</span> ReboundX</div>
             <p>One terminal for every exchange. Built for traders who count milliseconds — and prefer their fees back.</p>
-            <div style={{ fontSize: 12, color: 'var(--rx-text-muted)', fontFamily: 'var(--rx-font-mono)', marginTop: 8 }}>
-              v0.9.4 · status: <span style={{ color: 'var(--rx-up)' }}>● operational</span>
+            <div className="rx-footer-version">
+              v0.9.4 · status: <span className="rx-status-up">● operational</span>
             </div>
           </div>
-          {cols.map(c => (
+          {footerCols.map(c => (
             <div className="rx-footer-col" key={c.h}>
               <h6>{c.h}</h6>
               <ul>

@@ -1,7 +1,7 @@
 import { useScrollReveal } from '@/shared/hooks/useScrollReveal';
 import SectionHeader from './SectionHeader';
 import { Check } from '@/shared/ui/icons/LandingIcons';
-import { tiers } from '@/features/landing/data/content';
+import { tiers } from '@/features/landing/data/pricing';
 
 export default function Pricing() {
   const ref = useScrollReveal<HTMLDivElement>();

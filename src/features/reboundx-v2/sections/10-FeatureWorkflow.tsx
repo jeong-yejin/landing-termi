@@ -1,15 +1,11 @@
-const steps = [
-  { ix: '01', nm: 'Discover', ds: 'Browse markets, funding, sentiment across every venue.' },
-  { ix: '02', nm: 'Trade', ds: 'Execute with one keystroke. Routes to best venue automatically.' },
-  { ix: '03', nm: 'Track', ds: 'Positions, P&L, and rebates stay anchored to the original signal.' },
-];
+import { workflowSteps } from '../data/features';
 
-export default function RxFeatureWorkflow() {
+export default function FeatureWorkflow() {
   return (
     <section className="rx-feat">
       <div className="rx-container">
         <div className="rx-feat-grid reverse">
-          <div className="rx-feat-text" style={{ marginLeft: 'auto' }}>
+          <div className="rx-feat-text rx-feat-text--end">
             <span className="tag"><span className="num">06</span> Connected workflow</span>
             <h3>Discovery → Trade → Track. One thread.</h3>
             <p>
@@ -25,7 +21,7 @@ export default function RxFeatureWorkflow() {
 
           <div className="rx-feat-vis">
             <div className="rx-flow">
-              {steps.map(s => (
+              {workflowSteps.map(s => (
                 <div className="rx-flow-step" key={s.ix}>
                   <span className="ix">{s.ix}</span>
                   <div>

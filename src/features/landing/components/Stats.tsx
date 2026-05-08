@@ -1,7 +1,7 @@
 import { useScrollReveal } from '@/shared/hooks/useScrollReveal';
 import { useCountUp } from '@/shared/hooks/useCountUp';
-import { stats } from '@/features/landing/data/content';
-import type { Stat } from '@/features/landing/data/content';
+import { stats } from '@/features/landing/data/stats';
+import type { Stat } from '@/features/landing/data/types';
 
 function StatCell({ stat }: { stat: Stat }) {
   const { formatted, ref } = useCountUp(stat.target, stat.decimals);

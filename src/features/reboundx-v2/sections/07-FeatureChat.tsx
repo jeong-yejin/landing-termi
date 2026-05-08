@@ -1,50 +1,13 @@
-type Msg =
-  | {
-      kind: 'msg';
-      who: string;
-      verified: boolean;
-      time: string;
-      body: string;
-      chipPos?: { side: string; size: string; px: string };
-      chipPnl?: { value: string };
-    }
-  | { kind: 'sys'; body: string };
+import { chatMessages } from '../data/features';
 
-const messages: Msg[] = [
-  {
-    kind: 'msg',
-    who: 'alphawhale',
-    verified: true,
-    time: '14:02',
-    body: 'long here, stops 66.8 — invalidation tight.',
-    chipPos: { side: 'long', size: '0.6 BTC', px: '67,140.20' },
-  },
-  { kind: 'sys', body: 'Whale alert · 480 BTC market buy on Binance' },
-  {
-    kind: 'msg',
-    who: '0xpepe',
-    verified: false,
-    time: '14:03',
-    body: 'funding flipped negative on HL — carry window open.',
-  },
-  {
-    kind: 'msg',
-    who: 'trader_jp',
-    verified: true,
-    time: '14:05',
-    body: 'closed 50% — clean scalp.',
-    chipPnl: { value: '+$1,240' },
-  },
-];
-
-export default function RxFeatureChat() {
+export default function FeatureChat() {
   return (
     <section className="rx-feat">
       <div className="rx-container">
         <div className="rx-feat-grid">
           <div className="rx-feat-text">
             <span className="tag"><span className="num">03</span> Live trader rooms</span>
-            <h3>Read the room — <span style={{ color: 'var(--rx-lime)' }}>from the terminal.</span></h3>
+            <h3>Read the room — <span className="rx-accent">from the terminal.</span></h3>
             <p>
               Per-symbol rooms with verified traders, whale alerts, and funding shifts —
               right next to the order ticket. Stop flipping between Discord, X, and Telegram for context.
@@ -67,7 +30,7 @@ export default function RxFeatureChat() {
               </div>
 
               <div className="rx-chat-stream">
-                {messages.map((m, i) =>
+                {chatMessages.map((m, i) =>
                   m.kind === 'sys' ? (
                     <div key={i} className="rx-chat-msg sys">
                       <span className="ico">▲</span>

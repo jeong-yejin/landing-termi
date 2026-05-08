@@ -1,4 +1,4 @@
-import { footerCols } from '@/features/landing/data/content';
+import { footerCols } from '@/features/landing/data/nav';
 
 export default function Footer() {
   return (

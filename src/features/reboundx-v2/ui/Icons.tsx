@@ -22,6 +22,61 @@ export const Play = () => (
   </svg>
 );
 
+export const Check = ({
+  size = 15,
+  strokeWidth = 2.5,
+  style,
+}: {
+  size?: number;
+  strokeWidth?: number;
+  style?: React.CSSProperties;
+}) => (
+  <svg width={size} height={size} viewBox="0 0 15 15" fill="none" style={style}>
+    <path
+      d="M2 7.5L6 11.5L13 3.5"
+      stroke="currentColor"
+      strokeWidth={strokeWidth}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const ChevronDown = ({
+  size = 20,
+  style,
+}: {
+  size?: number;
+  style?: React.CSSProperties;
+}) => (
+  <svg width={size} height={size} viewBox="0 0 20 20" fill="none" style={style}>
+    <path
+      d="M5 7.5L10 12.5L15 7.5"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const Compass = ({
+  size = 18,
+}: {
+  size?: number;
+}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+    <path
+      d="M16.2 7.8L13.2 13.2L7.8 16.2L10.8 10.8L16.2 7.8Z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export const Sparkline = ({ trend = 'up' }: { trend?: 'up' | 'dn' }) => {
   const path = trend === 'up'
     ? 'M0 28 L10 24 L20 26 L30 18 L40 20 L50 12 L60 14 L70 6 L80 8 L90 2'

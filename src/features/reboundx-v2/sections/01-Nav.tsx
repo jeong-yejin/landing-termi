@@ -1,4 +1,4 @@
-export default function RxNav() {
+export default function Nav() {
   return (
     <nav className="rx-nav">
       <div className="rx-nav-inner">
@@ -14,8 +14,8 @@ export default function RxNav() {
           <a href="#docs">Docs</a>
         </div>
         <div className="rx-nav-cta">
-          <a href="#login" style={{ fontSize: 14, color: 'var(--rx-text-soft)' }}>Sign in</a>
-          <a href="#download" className="rx-btn-primary" style={{ padding: '8px 14px', fontSize: 13 }}>Download</a>
+          <a href="#login" className="rx-nav-signin">Sign in</a>
+          <a href="#download" className="rx-btn-primary rx-btn-sm">Download</a>
         </div>
       </div>
     </nav>

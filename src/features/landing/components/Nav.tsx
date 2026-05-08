@@ -1,5 +1,5 @@
 import { useNavScroll } from '@/shared/hooks/useNavScroll';
-import { navLinks } from '@/features/landing/data/content';
+import { navLinks } from '@/features/landing/data/nav';
 
 export default function Nav() {
   const scrolled = useNavScroll();

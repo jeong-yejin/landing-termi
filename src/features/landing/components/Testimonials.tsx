@@ -1,5 +1,5 @@
 import { useScrollReveal } from '@/shared/hooks/useScrollReveal';
-import { testimonials } from '@/features/landing/data/content';
+import { testimonials } from '@/features/landing/data/testimonials';
 
 export default function Testimonials() {
   const quoteRef = useScrollReveal<HTMLParagraphElement>();

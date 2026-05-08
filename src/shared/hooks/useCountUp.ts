@@ -8,6 +8,12 @@ export function useCountUp(target: number, decimals = 0, duration = 1400) {
   const started = useRef(false);
 
   useEffect(() => {
+    // Reset so a target change re-triggers the animation.
+    // Without this, started.current stays true and the new
+    // IntersectionObserver callback bails out immediately.
+    started.current = false;
+    setValue(0);
+
     const el = containerRef.current;
     if (!el) return;
 

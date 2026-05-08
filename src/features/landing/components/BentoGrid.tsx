@@ -1,14 +1,12 @@
 import { useScrollReveal } from '@/shared/hooks/useScrollReveal';
-import { useLiveTicker } from '@/shared/hooks/useLiveTicker';
+import { useTicker } from '@/shared/context/TickerContext';
+import { formatMoney } from '@/shared/lib/format';
 import SectionHeader from './SectionHeader';
 import { SearchSmall, Check, Chart } from '@/shared/ui/icons/LandingIcons';
 
 export default function BentoGrid() {
   const ref = useScrollReveal<HTMLDivElement>();
-  const ticker = useLiveTicker();
-
-  const formatMoney = (n: number) =>
-    n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const ticker = useTicker();
 
   return (
     <section className="bento-section" id="features">

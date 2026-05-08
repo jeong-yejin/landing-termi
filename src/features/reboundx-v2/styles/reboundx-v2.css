@@ -1429,6 +1429,14 @@
 .rx-footer-col a { font-size: 13px; color: var(--rx-text-muted); transition: color 0.15s; }
 .rx-footer-col a:hover { color: var(--rx-text); }
 
+.rx-footer-version {
+  font-size: 12px;
+  color: var(--rx-text-muted);
+  font-family: var(--rx-font-mono);
+  margin-top: 8px;
+}
+.rx-status-up { color: var(--rx-up); }
+
 .rx-footer-bot {
   margin-top: 48px;
   padding-top: 24px;
@@ -1441,6 +1449,301 @@
 }
 .rx-footer-bot .legal { display: flex; gap: 18px; }
 
+/* -------- Shared section header ----------------------------------------- */
+
+.rx-section-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+.rx-section-head h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--rx-text);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.rx-section-head p {
+  font-size: 14px;
+  color: var(--rx-text-muted);
+  margin: 0;
+}
+
+/* -------- Terminal Usage (s11) ------------------------------------------ */
+
+.rx-usage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  border-radius: 120px 120px 0 0;
+  background: var(--rx-bg);
+  padding: 60px 40px;
+  overflow-x: auto;
+}
+
+.rx-step-card {
+  position: relative;
+  overflow: hidden;
+  height: 368px;
+  flex-shrink: 0;
+  border-radius: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--rx-surface);
+  transition: border-color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+.rx-step-card.active {
+  border-color: rgba(202, 255, 93, 0.2);
+  box-shadow: 0 0 48px rgba(202, 255, 93, 0.06);
+}
+.rx-step-card:not(.active):hover {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.rx-step-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: linear-gradient(to bottom, #EEFFB9, #B3E84E);
+  color: #0A0A0A;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.rx-step-img {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #07080A;
+  overflow: hidden;
+  box-shadow: 0 0 40px 20px rgba(255, 255, 255, 0.02);
+}
+.rx-step-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+}
+.rx-step-img-gloss {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0.5px 0 1px rgba(255, 255, 255, 0.08);
+  pointer-events: none;
+}
+
+.rx-step-dots { display: flex; align-items: center; gap: 8px; }
+.rx-step-dot {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  height: 5px;
+  width: 5px;
+  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.3s;
+}
+.rx-step-dot.active { width: 20px; background: var(--rx-lime); }
+.rx-step-dot:not(.active):hover { background: rgba(255, 255, 255, 0.4); }
+
+/* -------- Benefits (s12) ------------------------------------------------ */
+
+.rx-benefits {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  background: var(--rx-bg);
+  padding: 48px 40px;
+}
+
+.rx-benefit-cards { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+
+.rx-benefit-card {
+  position: relative;
+  width: 357px;
+  height: 300px;
+  flex-shrink: 0;
+}
+
+.rx-benefit-surface {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 32px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--rx-surface);
+  transition: background-color 380ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.rx-benefit-card:hover .rx-benefit-surface { background: var(--rx-lime); }
+
+.rx-benefit-title {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+  white-space: pre-line;
+  color: var(--rx-text);
+  transition: color 380ms;
+}
+.rx-benefit-card:hover .rx-benefit-title { color: #0A0A0A; }
+
+.rx-benefit-body {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--rx-text-soft);
+  margin: 0;
+  transition: color 380ms;
+}
+.rx-benefit-card:hover .rx-benefit-body { color: #0A0A0A; }
+
+.rx-benefit-btn {
+  position: absolute;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--rx-lime);
+  transition: background-color 380ms cubic-bezier(0.16, 1, 0.3, 1);
+  color: #0A0A0A;
+}
+.rx-benefit-card:hover .rx-benefit-btn { background: var(--rx-bg); color: var(--rx-lime); }
+
+.rx-benefit-arrow-ne {
+  position: absolute;
+  transition: opacity 220ms;
+}
+.rx-benefit-arrow-e {
+  position: absolute;
+  opacity: 0;
+  transition: opacity 220ms 100ms;
+}
+.rx-benefit-card:hover .rx-benefit-arrow-ne { opacity: 0; }
+.rx-benefit-card:hover .rx-benefit-arrow-e { opacity: 1; }
+
+/* -------- FAQ guide (s13) ----------------------------------------------- */
+
+.rx-faq-guide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  background: var(--rx-bg);
+  padding: 60px 40px;
+}
+
+.rx-faq-guide-list { width: 100%; max-width: 1120px; }
+
+.rx-faq-guide-item { border-bottom: 1px solid rgba(255, 255, 255, 0.09); }
+
+.rx-faq-guide-q {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 0;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--rx-text);
+  line-height: 1.4;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.rx-faq-guide-q:hover { color: var(--rx-text-soft); }
+
+.rx-faq-guide-a {
+  padding-bottom: 24px;
+  font-size: 14px;
+  color: var(--rx-text-soft);
+  line-height: 1.7;
+  margin: 0;
+}
+.rx-faq-guide-a strong { color: var(--rx-text); font-weight: 600; }
+
+/* -------- CTA Banner (s14) ---------------------------------------------- */
+
+.rx-cta-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 0 120px 120px;
+  background: var(--rx-bg);
+  padding: 60px 40px;
+}
+
+.rx-cta-inner {
+  position: relative;
+  width: 100%;
+  max-width: 1120px;
+  height: 253px;
+  border-radius: 40px;
+  background: #111;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(227, 255, 138, 0.1);
+}
+
+.rx-cta-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  text-align: center;
+  padding: 0 64px;
+}
+.rx-cta-content h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--rx-text);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.rx-cta-content p { font-size: 14px; color: var(--rx-text-soft); margin: 0; }
+
+.rx-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 999px;
+  background: var(--rx-lime);
+  padding: 8px 20px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0A0A0A;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.rx-cta-btn:hover {
+  background: #d6ff70;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(202, 255, 93, 0.25);
+}
+
 /* -------- Responsive ---------------------------------------------------- */
 
 @media (max-width: 920px) {
@@ -1452,11 +1755,15 @@
   .rx-obj-grid { grid-template-columns: repeat(2, 1fr); }
   .rx-footer-cols { grid-template-columns: 1fr 1fr; }
   .rx-nav-links { display: none; }
+  .rx-benefit-card { width: 100%; max-width: 357px; }
 }
 @media (max-width: 560px) {
   .rx-counter { grid-template-columns: 1fr 1fr; }
   .rx-obj-grid { grid-template-columns: 1fr; }
   .rx-footer-cols { grid-template-columns: 1fr; }
   .rx-feat-text h3 { font-size: 28px; }
-  .rx-final-kbd .stage { transform: scale(0.7); transform-origin: center; }
+  .rx-usage { border-radius: 48px 48px 0 0; padding: 40px 16px; }
+  .rx-cta-section { border-radius: 0 0 48px 48px; }
+  .rx-cta-content { padding: 0 24px; }
+  .rx-cta-inner { height: auto; min-height: 200px; }
 }

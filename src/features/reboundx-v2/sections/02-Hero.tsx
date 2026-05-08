@@ -1,38 +1,16 @@
-import { ArrowRight, Apple, Play } from './RxIcons';
-import LaserFlow from './LaserFlow';
+import { ArrowRight, Apple, Play } from '../ui/Icons';
+import LaserFlow from '../ui/LaserFlow/LaserFlow';
+import {
+  heroExchanges,
+  askLevels,
+  bidLevels,
+  compareRows,
+  openPositions,
+} from '../data/hero';
 
-const exchanges = [
-  { code: 'BN', name: 'Binance', vol: '420M', active: true },
-  { code: 'BB', name: 'Bybit', vol: '188M' },
-  { code: 'OK', name: 'OKX', vol: '156M' },
-  { code: 'HL', name: 'Hyperliquid', vol: '92M' },
-  { code: 'DX', name: 'dYdX', vol: '34M' },
-  { code: 'BG', name: 'Bitget', vol: '76M' },
-  { code: 'KR', name: 'Kraken', vol: '41M' },
-  { code: 'GM', name: 'GMX', vol: '18M' },
-];
+type CSSWithDepth = React.CSSProperties & { '--depth': string };
 
-const askLevels = [
-  { px: '67,142.50', sz: '0.84', total: '12.40', d: 38 },
-  { px: '67,141.20', sz: '1.20', total: '11.56', d: 52 },
-  { px: '67,140.80', sz: '0.62', total: '10.36', d: 28 },
-  { px: '67,140.10', sz: '2.05', total: '9.74', d: 78 },
-];
-const bidLevels = [
-  { px: '67,138.40', sz: '1.84', total: '14.20', d: 70 },
-  { px: '67,137.20', sz: '0.95', total: '12.36', d: 36 },
-  { px: '67,136.80', sz: '0.42', total: '11.41', d: 18 },
-  { px: '67,135.60', sz: '2.10', total: '10.99', d: 80 },
-];
-
-const compareRows = [
-  { ex: 'Binance', sw: 'BN', px: '67,140.10', spr: '0.30', best: false },
-  { ex: 'Hyperliquid', sw: 'HL', px: '67,139.80', spr: '0.20', best: true },
-  { ex: 'OKX', sw: 'OK', px: '67,142.50', spr: '0.45', best: false },
-  { ex: 'Bybit', sw: 'BB', px: '67,141.20', spr: '0.35', best: false },
-];
-
-export default function RxHero() {
+export default function Hero() {
   return (
     <section className="rx-hero">
       <div className="rx-hero-laser">
@@ -81,7 +59,7 @@ export default function RxHero() {
             {/* Left rail: connected exchanges */}
             <aside className="rx-term-rail">
               <h6>Connected · 8</h6>
-              {exchanges.map(e => (
+              {heroExchanges.map(e => (
                 <div key={e.code} className={`item ${e.active ? 'active' : ''}`}>
                   <span className="ico">{e.code}</span>
                   <span className="grow">{e.name}</span>
@@ -90,7 +68,7 @@ export default function RxHero() {
               ))}
             </aside>
 
-            {/* Main */}
+            {/* Main panel */}
             <div className="rx-term-main">
               <div className="rx-term-main-head">
                 <div className="rx-term-symbol">
@@ -104,11 +82,20 @@ export default function RxHero() {
               <div className="rx-term-row">
                 {/* Order book */}
                 <div className="rx-term-card">
-                  <div className="rx-term-card-head"><span>Order book</span><span>Hyperliquid</span></div>
+                  <div className="rx-term-card-head">
+                    <span>Order book</span>
+                    <span>Hyperliquid</span>
+                  </div>
                   <div className="rx-book">
                     {askLevels.slice().reverse().map((a, i) => (
-                      <div key={i} className="ask" style={{ ['--depth' as string]: `${100 - a.d}%` }}>
-                        <span>{a.px}</span><span style={{ textAlign: 'center' }}>{a.sz}</span><span style={{ textAlign: 'right' }}>{a.total}</span>
+                      <div
+                        key={`ask-${i}`}
+                        className="ask"
+                        style={{ '--depth': `${100 - a.d}%` } as CSSWithDepth}
+                      >
+                        <span>{a.px}</span>
+                        <span className="center">{a.sz}</span>
+                        <span className="right">{a.total}</span>
                       </div>
                     ))}
                     <div className="mid">
@@ -116,8 +103,14 @@ export default function RxHero() {
                       <span className="spread">spread 0.20</span>
                     </div>
                     {bidLevels.map((b, i) => (
-                      <div key={i} className="bid" style={{ ['--depth' as string]: `${100 - b.d}%` }}>
-                        <span>{b.px}</span><span style={{ textAlign: 'center' }}>{b.sz}</span><span style={{ textAlign: 'right' }}>{b.total}</span>
+                      <div
+                        key={`bid-${i}`}
+                        className="bid"
+                        style={{ '--depth': `${100 - b.d}%` } as CSSWithDepth}
+                      >
+                        <span>{b.px}</span>
+                        <span className="center">{b.sz}</span>
+                        <span className="right">{b.total}</span>
                       </div>
                     ))}
                   </div>
@@ -125,17 +118,26 @@ export default function RxHero() {
 
                 {/* Cross-venue compare */}
                 <div className="rx-term-card">
-                  <div className="rx-term-card-head"><span>Cross-venue</span><span>BTC perp</span></div>
+                  <div className="rx-term-card-head">
+                    <span>Cross-venue</span>
+                    <span>BTC perp</span>
+                  </div>
                   <div className="rx-compare">
                     <div className="rx-compare-row head">
-                      <span>Venue</span><span>Mark</span><span>Spread</span><span style={{ textAlign: 'right' }}>Route</span>
+                      <span>Venue</span>
+                      <span>Mark</span>
+                      <span>Spread</span>
+                      <span className="right">Route</span>
                     </div>
                     {compareRows.map(r => (
                       <div key={r.ex} className={`rx-compare-row ${r.best ? 'best' : ''}`}>
                         <span className="ex"><span className="swatch" />{r.ex}</span>
                         <span>{r.px}</span>
                         <span>{r.spr}</span>
-                        <span style={{ textAlign: 'right', color: r.best ? 'var(--rx-lime)' : 'var(--rx-text-dim)' }}>
+                        <span
+                          className="right"
+                          style={{ color: r.best ? 'var(--rx-lime)' : 'var(--rx-text-dim)' }}
+                        >
                           {r.best ? '◉' : '○'}
                         </span>
                       </div>
@@ -159,28 +161,19 @@ export default function RxHero() {
 
               <div>
                 <span className="rx-term-side-head">Open positions · 3</span>
-                <div className="rx-positions" style={{ marginTop: 8 }}>
-                  <div className="rx-pos">
-                    <div>
-                      <div><span className="sym">BTC-PERP</span> <span className="side l">LONG</span></div>
-                      <div className="px">2.4 @ 66,802</div>
+                <div className="rx-positions">
+                  {openPositions.map(p => (
+                    <div key={p.sym} className="rx-pos">
+                      <div>
+                        <div>
+                          <span className="sym">{p.sym}</span>{' '}
+                          <span className={`side ${p.side}`}>{p.sideLabel}</span>
+                        </div>
+                        <div className="px">{p.size} @ {p.entry}</div>
+                      </div>
+                      <span className={`pnl ${p.pnlDir}`}>{p.pnl}</span>
                     </div>
-                    <span className="pnl up">+$812</span>
-                  </div>
-                  <div className="rx-pos">
-                    <div>
-                      <div><span className="sym">SOL-PERP</span> <span className="side l">LONG</span></div>
-                      <div className="px">120 @ 184.20</div>
-                    </div>
-                    <span className="pnl up">+$246</span>
-                  </div>
-                  <div className="rx-pos">
-                    <div>
-                      <div><span className="sym">ETH-PERP</span> <span className="side s">SHORT</span></div>
-                      <div className="px">8.0 @ 3,492</div>
-                    </div>
-                    <span className="pnl dn">-$94</span>
-                  </div>
+                  ))}
                 </div>
               </div>
             </aside>

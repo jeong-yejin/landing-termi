@@ -1,5 +1,5 @@
 import { useScrollReveal } from '@/shared/hooks/useScrollReveal';
-import { exchanges } from '@/features/landing/data/content';
+import { exchanges } from '@/features/landing/data/nav';
 
 export default function TrustedBy() {
   const ref = useScrollReveal<HTMLDivElement>();

@@ -1,7 +1,7 @@
 import { useScrollReveal } from '@/shared/hooks/useScrollReveal';
 import SectionHeader from './SectionHeader';
 import { StepPlus, StepChart, StepDownload } from '@/shared/ui/icons/LandingIcons';
-import { steps } from '@/features/landing/data/content';
+import { steps } from '@/features/landing/data/steps';
 
 const ICONS = {
   plus: StepPlus,

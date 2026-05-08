@@ -1,20 +1,21 @@
 import { useEffect } from 'react';
 import './styles/reboundx-v2.css';
 
-import RxNav from './components/RxNav';
-import RxHero from './components/RxHero';
-import RxProof from './components/RxProof';
-import RxTestimonials from './components/RxTestimonials';
-import RxFeatureStateAware from './components/RxFeatureStateAware';
-import RxFeatureCompare from './components/RxFeatureCompare';
-import RxFeatureChat from './components/RxFeatureChat';
-import RxFeatureInfo from './components/RxFeatureInfo';
-import RxFeatureRebates from './components/RxFeatureRebates';
-import RxFeatureWorkflow from './components/RxFeatureWorkflow';
-import RxObjections from './components/RxObjections';
-import RxFAQ from './components/RxFAQ';
-import RxFinalCTA from './components/RxFinalCTA';
-import RxFooter from './components/RxFooter';
+import Nav from './sections/01-Nav';
+import Hero from './sections/02-Hero';
+import Proof from './sections/03-Proof';
+import Testimonials from './sections/04-Testimonials';
+import FeatureStateAware from './sections/05-FeatureStateAware';
+import FeatureCompare from './sections/06-FeatureCompare';
+import FeatureChat from './sections/07-FeatureChat';
+import FeatureInfo from './sections/08-FeatureInfo';
+import FeatureRebates from './sections/09-FeatureRebates';
+import FeatureWorkflow from './sections/10-FeatureWorkflow';
+import TerminalUsage from './sections/11-TerminalUsage';
+import Benefits from './sections/12-Benefits';
+import FAQ from './sections/13-FAQ';
+import CTABanner from './sections/14-CTABanner';
+import Footer from './sections/15-Footer';
 
 export default function ReboundXV2() {
   useEffect(() => {
@@ -24,20 +25,21 @@ export default function ReboundXV2() {
 
   return (
     <div className="rx">
-      <RxNav />
-      <RxHero />
-      <RxProof />
-      <RxTestimonials />
-      <RxFeatureStateAware />
-      <RxFeatureCompare />
-      <RxFeatureChat />
-      <RxFeatureInfo />
-      <RxFeatureRebates />
-      <RxFeatureWorkflow />
-      <RxObjections />
-      <RxFAQ />
-      <RxFinalCTA />
-      <RxFooter />
+      <Nav />
+      <Hero />
+      <Proof />
+      <Testimonials />
+      <FeatureStateAware />
+      <FeatureCompare />
+      <FeatureChat />
+      <FeatureInfo />
+      <FeatureRebates />
+      <FeatureWorkflow />
+      <TerminalUsage />
+      <Benefits />
+      <FAQ />
+      <CTABanner />
+      <Footer />
     </div>
   );
 }

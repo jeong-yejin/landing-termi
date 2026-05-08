@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useScrollReveal } from '@/shared/hooks/useScrollReveal';
 import SectionHeader from './SectionHeader';
 import { Check, Search, Chart, Layout } from '@/shared/ui/icons/LandingIcons';
-import { hotkeyTabs } from '@/features/landing/data/content';
-import type { HotkeyTab, HotkeyTabId } from '@/features/landing/data/content';
+import { hotkeyTabs } from '@/features/landing/data/hotkeys';
+import type { HotkeyTab, HotkeyTabId } from '@/features/landing/data/types';
 
 const TAB_ICONS: Record<HotkeyTabId, React.ComponentType> = {
   orders: Check,

@@ -1,46 +1,19 @@
-import { useLiveTicker } from '@/shared/hooks/useLiveTicker';
+import { useTicker } from '@/shared/context/TickerContext';
 import { Rebate } from '@/shared/ui/icons/LandingIcons';
+import {
+  binanceAsks, binanceBids,
+  bybitAsks, bybitBids,
+  hlAsks, hlBids,
+  type BookRow,
+} from './terminal/bookData';
 
-type Row = { kind: 'ask' | 'bid'; price: string; qty: string; depth: number };
+type CSSWithDepth = React.CSSProperties & { '--depth': string };
 
-const binance: Row[] = [
-  { kind: 'ask', price: '68,742.30', qty: '0.412', depth: 28 },
-  { kind: 'ask', price: '68,741.10', qty: '0.890', depth: 42 },
-  { kind: 'ask', price: '68,740.20', qty: '0.205', depth: 18 },
-];
-const binanceBids: Row[] = [
-  { kind: 'bid', price: '68,740.10', qty: '0.318', depth: 22 },
-  { kind: 'bid', price: '68,739.60', qty: '0.742', depth: 38 },
-  { kind: 'bid', price: '68,738.40', qty: '0.501', depth: 28 },
-];
-
-const bybitAsk: Row[] = [
-  { kind: 'ask', price: '68,741.80', qty: '0.534', depth: 30 },
-  { kind: 'ask', price: '68,740.40', qty: '1.120', depth: 48 },
-];
-const bybitBids: Row[] = [
-  { kind: 'bid', price: '68,739.45', qty: '0.645', depth: 32 },
-  { kind: 'bid', price: '68,738.90', qty: '0.412', depth: 26 },
-  { kind: 'bid', price: '68,737.60', qty: '0.318', depth: 22 },
-];
-
-const hl: Row[] = [
-  { kind: 'ask', price: '68,742.00', qty: '0.380', depth: 24 },
-  { kind: 'ask', price: '68,741.20', qty: '0.612', depth: 36 },
-  { kind: 'ask', price: '68,740.80', qty: '0.290', depth: 22 },
-];
-const hlBids: Row[] = [
-  { kind: 'bid', price: '68,739.20', qty: '0.502', depth: 28 },
-  { kind: 'bid', price: '68,738.40', qty: '0.880', depth: 44 },
-  { kind: 'bid', price: '68,737.10', qty: '0.218', depth: 18 },
-];
-
-function BookRow({ row, depthVar }: { row: Row; depthVar?: string }) {
+function BookRow({ row }: { row: BookRow }) {
   return (
     <div
       className={`row ${row.kind}`}
-      style={{ ['--depth' as string]: `${row.depth}%` } as React.CSSProperties}
-      id={depthVar}
+      style={{ '--depth': `${row.depth}%` } as CSSWithDepth}
     >
       <span className="price">{row.price}</span>
       <span className="qty">{row.qty}</span>
@@ -49,7 +22,7 @@ function BookRow({ row, depthVar }: { row: Row; depthVar?: string }) {
 }
 
 export default function Terminal() {
-  const ticker = useLiveTicker();
+  const ticker = useTicker();
   const liveAsk = ticker.ask.toFixed(2);
   const liveAskColor =
     ticker.askDelta === 0
@@ -81,7 +54,7 @@ export default function Terminal() {
             <span style={{ color: 'var(--text-dim)', fontSize: 9 }}>spot</span>
           </div>
           <div className="book">
-            {binance.map((r, i) => <BookRow key={`bn-a-${i}`} row={r} />)}
+            {binanceAsks.map((r, i) => <BookRow key={`bn-a-${i}`} row={r} />)}
             <div className="spread-row">
               <span>spread</span>
               <span style={{ color: 'var(--text)' }}>0.10</span>
@@ -96,10 +69,10 @@ export default function Terminal() {
             <span className="badge">best ask</span>
           </div>
           <div className="book">
-            {bybitAsk.map((r, i) => <BookRow key={`by-a-${i}`} row={r} />)}
+            {bybitAsks.map((r, i) => <BookRow key={`by-a-${i}`} row={r} />)}
             <div
               className="row ask"
-              style={{ ['--depth' as string]: '40%' } as React.CSSProperties}
+              style={{ '--depth': '40%' } as CSSWithDepth}
             >
               <span className="price" style={{ color: liveAskColor, transition: 'color 0.28s' }}>
                 {liveAsk}
@@ -120,7 +93,7 @@ export default function Terminal() {
             <span style={{ color: 'var(--text-dim)', fontSize: 9 }}>perp</span>
           </div>
           <div className="book">
-            {hl.map((r, i) => <BookRow key={`hl-a-${i}`} row={r} />)}
+            {hlAsks.map((r, i) => <BookRow key={`hl-a-${i}`} row={r} />)}
             <div className="spread-row">
               <span>fund</span>
               <span style={{ color: 'var(--success)' }}>+0.012%</span>

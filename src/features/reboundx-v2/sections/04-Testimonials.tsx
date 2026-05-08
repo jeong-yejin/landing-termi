@@ -1,34 +1,10 @@
 import { useState } from 'react';
+import { testimonials } from '../data/testimonials';
 
-type T = { name: string; role: string; initials: string; quote: React.ReactNode; meta: string };
+export default function Testimonials() {
+  const [active, setActive] = useState(0);
+  const cur = testimonials[active];
 
-const people: T[] = [
-  {
-    name: 'Sarah K.',
-    role: 'Multi-exchange CEX trader',
-    initials: 'SK',
-    quote: <>I had four windows open every morning. Now I have <strong>one</strong>.</>,
-    meta: 'Trades 4 venues · 60+ trades/day',
-  },
-  {
-    name: 'TR Wallace',
-    role: 'Perp-native trader',
-    initials: 'TR',
-    quote: <>The funding-rate compare alone saved me <strong>3% APR</strong>. ReboundX paid for itself in week one.</>,
-    meta: 'Hyperliquid · dYdX · GMX',
-  },
-  {
-    name: '@0xpneuma',
-    role: 'High-frequency trader',
-    initials: '0x',
-    quote: <>Rebates fund my coffee budget. <strong>Every. Single. Day.</strong></>,
-    meta: '$340k notional/day · maker-only',
-  },
-];
-
-export default function RxTestimonials() {
-  const [active, setActive] = useState(1);
-  const cur = people[active];
   return (
     <section className="rx-test">
       <div className="rx-container">
@@ -39,9 +15,10 @@ export default function RxTestimonials() {
         </div>
 
         <div className="rx-test-pills">
-          {people.map((p, i) => (
+          {testimonials.map((p, i) => (
             <button
               key={p.name}
+              type="button"
               className={`rx-test-pill ${i === active ? 'is-active' : ''}`}
               onClick={() => setActive(i)}
             >
