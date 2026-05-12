@@ -1,22 +1,43 @@
-import type { Step } from './types';
+import type { UsageStep } from './types';
 
-export const steps: Step[] = [
+export const usageSteps: UsageStep[] = [
   {
-    num: 'STEP 01',
-    title: 'Sign up via ReboundX',
-    body: 'Open or link your exchange account through our referral. 30 seconds. Works on Binance, Bybit, OKX, Bitget, Upbit, and 13 others.',
-    icon: 'plus',
+    num: 1,
+    title: 'Trade in one workspace',
+    listStyle: 'check',
+    items: [
+      'Select pairs and exchanges',
+      'Place orders and manage open positions',
+      'View orders and trade history',
+    ],
   },
   {
-    num: 'STEP 02',
-    title: 'Trade on Trading Studio',
-    body: 'Use the unified terminal. Every fill — maker or taker, spot or perp — flows through the same rebate-aware fee model.',
-    icon: 'chart',
+    num: 2,
+    title: 'Funding Rate',
+    listStyle: 'check',
+    items: [
+      'Compare funding rates by exchange',
+      'Check funding before trading',
+    ],
   },
   {
-    num: 'STEP 03',
-    title: 'Get paid every Friday',
-    body: 'Up to 50% of your trading fees returned in USDT. No claim flow, no minimum. Sends to a wallet you control.',
-    icon: 'download',
+    num: 3,
+    title: 'View your activity',
+    listStyle: 'check',
+    items: [
+      'View asset, deposit status',
+      'Check funding history',
+      'See trading activity summary',
+    ],
+  },
+  {
+    num: 4,
+    title: 'Exchange Connection',
+    listStyle: 'numbered',
+    items: [
+      'Select an exchange',
+      'Use connected exchanges in Trade',
+      'Confirm your connection to ReboundX',
+    ],
   },
 ];

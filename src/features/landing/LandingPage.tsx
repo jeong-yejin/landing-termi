@@ -1,35 +1,31 @@
-import { useSmoothScroll } from '@/shared/hooks/useSmoothScroll';
-import { TickerProvider } from '@/shared/context/TickerContext';
-import Nav from './components/Nav';
-import Hero from './components/Hero';
-import TrustedBy from './components/TrustedBy';
-import Stats from './components/Stats';
-import BentoGrid from './components/BentoGrid';
-import Hotkeys from './components/Hotkeys';
-import HowItWorks from './components/HowItWorks';
-import Testimonials from './components/Testimonials';
-import Pricing from './components/Pricing';
-import FAQ from './components/FAQ';
-import FinalCTA from './components/FinalCTA';
-import Footer from './components/Footer';
+import { useEffect } from 'react';
+import './styles/landing.css';
 
-export default function Landing() {
-  useSmoothScroll();
+import Nav         from './sections/01-Nav';
+import Hero        from './sections/02-Hero';
+import Proof       from './sections/03-Proof';
+import Features    from './sections/05-Features';
+import OneTerminal from './sections/07-FeatureChat';
+import Bento       from './sections/06-FeatureCompare';
+import CTABanner   from './sections/14-CTABanner';
+import Footer      from './sections/15-Footer';
+
+export default function LandingPage() {
+  useEffect(() => {
+    document.body.classList.add('rx-body');
+    return () => { document.body.classList.remove('rx-body'); };
+  }, []);
 
   return (
-    <TickerProvider>
+    <div className="rx">
       <Nav />
       <Hero />
-      <TrustedBy />
-      <Stats />
-      <BentoGrid />
-      <Hotkeys />
-      <HowItWorks />
-      <Testimonials />
-      <Pricing />
-      <FAQ />
-      <FinalCTA />
+      <Proof />
+      <Features />
+      <OneTerminal />
+      <Bento />
+      <CTABanner />
       <Footer />
-    </TickerProvider>
+    </div>
   );
 }

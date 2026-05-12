@@ -2,27 +2,33 @@ import type { Testimonial } from './types';
 
 export const testimonials: Testimonial[] = [
   {
-    initials: 'MZ',
-    quote: (
-      <>"Funding compare across Hyperliquid + GMX + Drift in one panel. <em>$8,420 in rebates</em> last quarter on top of saved spread."</>
-    ),
-    handle: '@mz_perpdegen',
-    role: 'Perp-native · HL leaderboard',
+    name: 'Sarah K.',
+    role: 'Multi-exchange CEX trader',
+    initials: 'SK',
+    quote: <>I had four windows open every morning. Now I have <strong>one</strong>.</>,
+    meta: 'Trades 4 venues · 60+ trades/day',
   },
   {
-    initials: 'RV',
+    name: 'TR Wallace',
+    role: 'Perp-native trader',
+    initials: 'TR',
     quote: (
-      <>"OI, funding, basis side-by-side with execution. I cancelled <em>two other tools</em>. Hotkey layer is what hooked me."</>
+      <>The funding-rate compare alone saved me <strong>3% APR</strong>. ReboundX paid for itself in week one.</>
     ),
-    handle: '@runevolatility',
-    role: 'Quant · 4-CEX desk',
+    meta: 'Hyperliquid · dYdX · GMX',
   },
   {
-    initials: 'AK',
-    quote: (
-      <>"Connected three CEX sub-accounts and four wallets in 8 minutes. <em>$1,840/mo</em> in rebates I wasn't getting before."</>
-    ),
-    handle: '@anonkrypto',
-    role: 'Multi-account · arb desk',
+    name: '@0xpneuma',
+    role: 'High-frequency trader',
+    initials: '0x',
+    quote: <>Rebates fund my coffee budget. <strong>Every. Single. Day.</strong></>,
+    meta: '$340k notional/day · maker-only',
+  },
+  {
+    name: 'Marcus T.',
+    role: 'Momentum scalper',
+    initials: 'MT',
+    quote: <>I cut my per-trade decision time from ~40s to ~8s. <strong>The rebate is gravy — I came for the terminal.</strong></>,
+    meta: 'BTC/ETH perps · 12–30 trades/day',
   },
 ];
